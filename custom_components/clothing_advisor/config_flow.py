@@ -7,7 +7,7 @@ from typing import Any
 import voluptuous as vol
 
 from homeassistant import config_entries
-from homeassistant.core import HomeAssistant, callback
+from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers import selector
 
@@ -185,34 +185,6 @@ class ClothingAdvisorConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """Initialize the flow."""
         self._data: dict[str, Any] = {}
         self._report: CompatibilityReport | None = None
-
-    async def async_migrate_entry(
-        self, hass: HomeAssistant, config_entry: config_entries.ConfigEntry
-    ) -> bool:
-        """Migrate legacy fine-tuned profiles to exact custom thresholds."""
-        if config_entry.version != 1:
-            return True
-
-        data = dict(config_entry.data)
-        options = dict(config_entry.options)
-        effective = DEFAULTS | data | options
-        threshold_keys = tuple(_default_thresholds())
-        if any(
-            effective[key] != DEFAULTS[key]
-            for key in threshold_keys
-        ):
-            adjustment = {
-                PROFILE_COLD: 2,
-                PROFILE_WARM: -2,
-            }.get(effective[CONF_PROFILE], 0)
-            for key in threshold_keys:
-                options[key] = float(effective[key]) + adjustment
-            options[CONF_PROFILE] = PROFILE_CUSTOM
-
-        hass.config_entries.async_update_entry(
-            config_entry, data=data, options=options, version=2
-        )
-        return True
 
     @staticmethod
     @callback
