@@ -1,4 +1,13 @@
 {
+  "common": {
+    "reason": {
+      "current": "Føles som {temperature} °C nå",
+      "warming": "Blir varmere, opptil omtrent {temperature} °C",
+      "cooling": "Blir kaldere, ned mot omtrent {temperature} °C",
+      "wind": "Vinden gjør et ekstra lag nyttig",
+      "rain": "Det kan komme regn"
+    }
+  },
   "config": {
     "step": {
       "user": {
@@ -81,7 +90,62 @@
   "entity": {
     "sensor": {
       "recommendation": {
-        "name": "Klesanbefaling"
+        "name": "Klesanbefaling",
+        "state": {
+          "shorts_t_shirt_no_jacket": "Shorts · T-skjorte · Ingen jakke",
+          "shorts_t_shirt_light_jacket": "Shorts · T-skjorte · Tynn jakke",
+          "shorts_t_shirt_thick_jacket": "Shorts · T-skjorte · Tykk jakke",
+          "shorts_t_shirt_rain_jacket": "Shorts · T-skjorte · Regnjakke",
+          "shorts_t_shirt_thick_waterproof_jacket": "Shorts · T-skjorte · Tykk vanntett jakke",
+          "shorts_t_shirt_sweater_no_jacket": "Shorts · T-skjorte · Genser · Ingen jakke",
+          "shorts_t_shirt_sweater_light_jacket": "Shorts · T-skjorte · Genser · Tynn jakke",
+          "shorts_t_shirt_sweater_thick_jacket": "Shorts · T-skjorte · Genser · Tykk jakke",
+          "shorts_t_shirt_sweater_rain_jacket": "Shorts · T-skjorte · Genser · Regnjakke",
+          "shorts_t_shirt_sweater_thick_waterproof_jacket": "Shorts · T-skjorte · Genser · Tykk vanntett jakke",
+          "trousers_t_shirt_no_jacket": "Bukse · T-skjorte · Ingen jakke",
+          "trousers_t_shirt_light_jacket": "Bukse · T-skjorte · Tynn jakke",
+          "trousers_t_shirt_thick_jacket": "Bukse · T-skjorte · Tykk jakke",
+          "trousers_t_shirt_rain_jacket": "Bukse · T-skjorte · Regnjakke",
+          "trousers_t_shirt_thick_waterproof_jacket": "Bukse · T-skjorte · Tykk vanntett jakke",
+          "trousers_t_shirt_sweater_no_jacket": "Bukse · T-skjorte · Genser · Ingen jakke",
+          "trousers_t_shirt_sweater_light_jacket": "Bukse · T-skjorte · Genser · Tynn jakke",
+          "trousers_t_shirt_sweater_thick_jacket": "Bukse · T-skjorte · Genser · Tykk jakke",
+          "trousers_t_shirt_sweater_rain_jacket": "Bukse · T-skjorte · Genser · Regnjakke",
+          "trousers_t_shirt_sweater_thick_waterproof_jacket": "Bukse · T-skjorte · Genser · Tykk vanntett jakke"
+        },
+        "state_attributes": {
+          "bottom": {
+            "state": {"shorts": "Shorts", "trousers": "Bukse"}
+          },
+          "base_layer": {
+            "state": {"t_shirt": "T-skjorte"}
+          },
+          "mid_layer": {
+            "state": {"sweater": "Genser"}
+          },
+          "top": {
+            "state": {
+              "t_shirt": "T-skjorte",
+              "t_shirt_sweater": "T-skjorte + genser"
+            }
+          },
+          "outerwear": {
+            "state": {
+              "no_jacket": "Ingen jakke",
+              "light_jacket": "Tynn jakke",
+              "thick_jacket": "Tykk jakke",
+              "rain_jacket": "Regnjakke",
+              "thick_waterproof_jacket": "Tykk vanntett jakke"
+            }
+          },
+          "forecast_type": {
+            "state": {
+              "hourly": "Hver time",
+              "twice_daily": "To ganger daglig",
+              "daily": "Daglig"
+            }
+          }
+        }
       }
     }
   },

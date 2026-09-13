@@ -28,13 +28,15 @@ and daily forecasts are supported with reduced precision.
 ## Recommendation sensor
 
 The integration creates one **Clothing recommendation** sensor. A typical state
-looks like:
+is displayed in the user's selected Home Assistant language:
 
 ```text
 Trousers · T-shirt · Light jacket
 ```
 
-The sensor exposes structured attributes for dashboards and automations:
+The sensor exposes structured attributes for dashboards and automations. Their
+raw values are stable identifiers such as `trousers` and `light_jacket`; Home
+Assistant translates them for display:
 
 - `bottom`, `base_layer`, `mid_layer`, and `outerwear`
 - `top`, retained as a combined compatibility value
@@ -59,6 +61,9 @@ optional mid-layer selected independently of outerwear. This supports both
 `T-shirt · Light jacket` and `T-shirt · Sweater · Light jacket`. The engine
 selects removable layers for temperature changes and then adjusts outerwear for
 wind and rain.
+
+English and Norwegian translations are included for the complete recommendation,
+individual clothing attributes, forecast type, and the human-readable reason.
 
 ## Personalization
 

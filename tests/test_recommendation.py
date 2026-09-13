@@ -34,6 +34,7 @@ def _load(name: str):
 
 const = _load("const")
 recommendation = _load("recommendation")
+localization = _load("localization")
 
 NOW = datetime(2026, 9, 13, 8, tzinfo=timezone.utc)
 DEFAULT_SETTINGS = dict(const.DEFAULTS)
@@ -74,7 +75,7 @@ class RecommendationTests(unittest.TestCase):
             DEFAULT_SETTINGS,
             NOW,
         )
-        self.assertEqual(result.state, "Trousers · T-shirt · Light jacket")
+        self.assertEqual(result.state, "trousers_t_shirt_light_jacket")
         self.assertIn("warming", result.reason)
 
     def test_falling_temperature_keeps_current_base_layer(self) -> None:
@@ -89,7 +90,7 @@ class RecommendationTests(unittest.TestCase):
             DEFAULT_SETTINGS,
             NOW,
         )
-        self.assertEqual(result.state, "Shorts · T-shirt · Light jacket")
+        self.assertEqual(result.state, "shorts_t_shirt_light_jacket")
         self.assertIn("cooling", result.reason)
 
     def test_rain_changes_outerwear(self) -> None:
@@ -108,7 +109,7 @@ class RecommendationTests(unittest.TestCase):
             DEFAULT_SETTINGS,
             NOW,
         )
-        self.assertEqual(result.outerwear, "Rain jacket")
+        self.assertEqual(result.outerwear, "rain_jacket")
         self.assertTrue(result.rain)
 
     def test_sweater_is_an_optional_mid_layer(self) -> None:
@@ -123,11 +124,11 @@ class RecommendationTests(unittest.TestCase):
             DEFAULT_SETTINGS,
             NOW,
         )
-        self.assertEqual(result.base_layer, "T-shirt")
-        self.assertEqual(result.mid_layer, "Sweater")
-        self.assertEqual(result.top, "T-shirt + Sweater")
+        self.assertEqual(result.base_layer, "t_shirt")
+        self.assertEqual(result.mid_layer, "sweater")
+        self.assertEqual(result.top, "t_shirt_sweater")
         self.assertEqual(
-            result.state, "Trousers · T-shirt · Sweater · Light jacket"
+            result.state, "trousers_t_shirt_sweater_light_jacket"
         )
 
     def test_jacket_does_not_require_sweater(self) -> None:
@@ -143,7 +144,7 @@ class RecommendationTests(unittest.TestCase):
             NOW,
         )
         self.assertIsNone(result.mid_layer)
-        self.assertEqual(result.state, "Trousers · T-shirt · Light jacket")
+        self.assertEqual(result.state, "trousers_t_shirt_light_jacket")
 
     def test_profiles_shift_thresholds(self) -> None:
         """Cold and warm profiles shift the shorts threshold by two degrees."""
@@ -155,11 +156,11 @@ class RecommendationTests(unittest.TestCase):
         warm = DEFAULT_SETTINGS | {const.CONF_PROFILE: const.PROFILE_WARM}
         self.assertEqual(
             recommendation.build_recommendation(weather, cold, NOW).bottom,
-            "Trousers",
+            "trousers",
         )
         self.assertEqual(
             recommendation.build_recommendation(weather, warm, NOW).bottom,
-            "Shorts",
+            "shorts",
         )
 
     def test_custom_profile_uses_exact_thresholds(self) -> None:
@@ -174,7 +175,32 @@ class RecommendationTests(unittest.TestCase):
         }
         self.assertEqual(
             recommendation.build_recommendation(weather, custom, NOW).bottom,
-            "Shorts",
+            "shorts",
+        )
+
+    def test_reason_uses_norwegian_translation_templates(self) -> None:
+        """The human-readable reason is built from translated templates."""
+        result = recommendation.build_recommendation(
+            snapshot(
+                12,
+                [
+                    {"datetime": "2026-09-13T10:00:00+00:00", "temperature": 17}
+                ],
+                wind_speed=9,
+            ),
+            DEFAULT_SETTINGS,
+            NOW,
+        )
+        prefix = "component.clothing_advisor.common.reason."
+        translations = {
+            f"{prefix}current": "Føles som {temperature} °C nå",
+            f"{prefix}warming": "Blir varmere til {temperature} °C",
+            f"{prefix}wind": "Vinden gjør et ekstra lag nyttig",
+        }
+        self.assertEqual(
+            localization.localized_reason(result, translations),
+            "Føles som 12.0 °C nå. Blir varmere til 17.0 °C. "
+            "Vinden gjør et ekstra lag nyttig.",
         )
 
 

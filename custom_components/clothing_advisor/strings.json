@@ -1,4 +1,13 @@
 {
+  "common": {
+    "reason": {
+      "current": "Feels like {temperature} °C now",
+      "warming": "Warming to about {temperature} °C",
+      "cooling": "Cooling to about {temperature} °C",
+      "wind": "Wind makes an extra layer useful",
+      "rain": "Rain is possible"
+    }
+  },
   "config": {
     "step": {
       "user": {
@@ -81,7 +90,62 @@
   "entity": {
     "sensor": {
       "recommendation": {
-        "name": "Clothing recommendation"
+        "name": "Clothing recommendation",
+        "state": {
+          "shorts_t_shirt_no_jacket": "Shorts · T-shirt · No jacket",
+          "shorts_t_shirt_light_jacket": "Shorts · T-shirt · Light jacket",
+          "shorts_t_shirt_thick_jacket": "Shorts · T-shirt · Thick jacket",
+          "shorts_t_shirt_rain_jacket": "Shorts · T-shirt · Rain jacket",
+          "shorts_t_shirt_thick_waterproof_jacket": "Shorts · T-shirt · Thick waterproof jacket",
+          "shorts_t_shirt_sweater_no_jacket": "Shorts · T-shirt · Sweater · No jacket",
+          "shorts_t_shirt_sweater_light_jacket": "Shorts · T-shirt · Sweater · Light jacket",
+          "shorts_t_shirt_sweater_thick_jacket": "Shorts · T-shirt · Sweater · Thick jacket",
+          "shorts_t_shirt_sweater_rain_jacket": "Shorts · T-shirt · Sweater · Rain jacket",
+          "shorts_t_shirt_sweater_thick_waterproof_jacket": "Shorts · T-shirt · Sweater · Thick waterproof jacket",
+          "trousers_t_shirt_no_jacket": "Trousers · T-shirt · No jacket",
+          "trousers_t_shirt_light_jacket": "Trousers · T-shirt · Light jacket",
+          "trousers_t_shirt_thick_jacket": "Trousers · T-shirt · Thick jacket",
+          "trousers_t_shirt_rain_jacket": "Trousers · T-shirt · Rain jacket",
+          "trousers_t_shirt_thick_waterproof_jacket": "Trousers · T-shirt · Thick waterproof jacket",
+          "trousers_t_shirt_sweater_no_jacket": "Trousers · T-shirt · Sweater · No jacket",
+          "trousers_t_shirt_sweater_light_jacket": "Trousers · T-shirt · Sweater · Light jacket",
+          "trousers_t_shirt_sweater_thick_jacket": "Trousers · T-shirt · Sweater · Thick jacket",
+          "trousers_t_shirt_sweater_rain_jacket": "Trousers · T-shirt · Sweater · Rain jacket",
+          "trousers_t_shirt_sweater_thick_waterproof_jacket": "Trousers · T-shirt · Sweater · Thick waterproof jacket"
+        },
+        "state_attributes": {
+          "bottom": {
+            "state": {"shorts": "Shorts", "trousers": "Trousers"}
+          },
+          "base_layer": {
+            "state": {"t_shirt": "T-shirt"}
+          },
+          "mid_layer": {
+            "state": {"sweater": "Sweater"}
+          },
+          "top": {
+            "state": {
+              "t_shirt": "T-shirt",
+              "t_shirt_sweater": "T-shirt + sweater"
+            }
+          },
+          "outerwear": {
+            "state": {
+              "no_jacket": "No jacket",
+              "light_jacket": "Light jacket",
+              "thick_jacket": "Thick jacket",
+              "rain_jacket": "Rain jacket",
+              "thick_waterproof_jacket": "Thick waterproof jacket"
+            }
+          },
+          "forecast_type": {
+            "state": {
+              "hourly": "Hourly",
+              "twice_daily": "Twice daily",
+              "daily": "Daily"
+            }
+          }
+        }
       }
     }
   },

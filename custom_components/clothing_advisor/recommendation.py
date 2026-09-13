@@ -20,6 +20,23 @@ from .const import (
 RAINY_CONDITIONS = {"pouring", "rainy", "lightning-rainy"}
 PROFILE_ADJUSTMENTS = {PROFILE_COLD: 2.0, PROFILE_WARM: -2.0}
 
+BOTTOMS = ("shorts", "trousers")
+BASE_LAYER = "t_shirt"
+MID_LAYERS = (None, "sweater")
+OUTERWEAR = (
+    "no_jacket",
+    "light_jacket",
+    "thick_jacket",
+    "rain_jacket",
+    "thick_waterproof_jacket",
+)
+RECOMMENDATION_STATES = tuple(
+    "_".join(part for part in (bottom, BASE_LAYER, mid_layer, outerwear) if part)
+    for bottom in BOTTOMS
+    for mid_layer in MID_LAYERS
+    for outerwear in OUTERWEAR
+)
+
 
 @dataclass(frozen=True)
 class WeatherSnapshot:
@@ -93,18 +110,18 @@ def build_recommendation(
         float(settings[CONF_HEAVY_JACKET_THRESHOLD]) + adjustment
     )
 
-    bottom = "Shorts" if current_feels >= shorts_threshold else "Trousers"
+    bottom = "shorts" if current_feels >= shorts_threshold else "trousers"
     top_temperature = high if high - current_feels >= 4 else current_feels
-    base_layer = "T-shirt"
-    mid_layer = "Sweater" if top_temperature <= sweater_threshold else None
-    top = f"{base_layer} + {mid_layer}" if mid_layer else base_layer
+    base_layer = BASE_LAYER
+    mid_layer = "sweater" if top_temperature <= sweater_threshold else None
+    top = "t_shirt_sweater" if mid_layer else base_layer
 
     if low < heavy_jacket_threshold:
-        outerwear = "Thick jacket"
+        outerwear = "thick_jacket"
     elif low < light_jacket_threshold:
-        outerwear = "Light jacket"
+        outerwear = "light_jacket"
     else:
-        outerwear = "No jacket"
+        outerwear = "no_jacket"
 
     wind_values = [
         value
@@ -120,8 +137,8 @@ def build_recommendation(
     if max_wind is not None and max_wind > 12:
         outerwear = _warmer_outerwear(outerwear)
     elif max_wind is not None and max_wind > 8 and low <= 18 + adjustment:
-        if outerwear == "No jacket":
-            outerwear = "Light jacket"
+        if outerwear == "no_jacket":
+            outerwear = "light_jacket"
 
     probabilities = [
         value
@@ -141,8 +158,8 @@ def build_recommendation(
         or precipitation > 0.5
         or bool(conditions & RAINY_CONDITIONS)
     )
-    if rain and outerwear in {"No jacket", "Light jacket"}:
-        outerwear = "Rain jacket"
+    if rain and outerwear in {"no_jacket", "light_jacket"}:
+        outerwear = "rain_jacket"
 
     reason_parts = [f"Feels like {current_feels:.1f} °C now"]
     if high - current_feels >= 4:
@@ -155,13 +172,12 @@ def build_recommendation(
         reason_parts.append("rain is possible")
     reason = ". ".join(reason_parts) + "."
 
-    state_layers = [bottom, base_layer]
-    if mid_layer:
-        state_layers.append(mid_layer)
-    state_layers.append(outerwear)
+    state = "_".join(
+        part for part in (bottom, base_layer, mid_layer, outerwear) if part
+    )
 
     return ClothingRecommendation(
-        state=" · ".join(state_layers),
+        state=state,
         bottom=bottom,
         base_layer=base_layer,
         mid_layer=mid_layer,
@@ -214,7 +230,7 @@ def _number(value: Any) -> float | None:
 def _warmer_outerwear(current: str) -> str:
     """Move outerwear one warmth level up."""
     return {
-        "No jacket": "Light jacket",
-        "Light jacket": "Thick jacket",
-        "Rain jacket": "Thick waterproof jacket",
+        "no_jacket": "light_jacket",
+        "light_jacket": "thick_jacket",
+        "rain_jacket": "thick_waterproof_jacket",
     }.get(current, current)
