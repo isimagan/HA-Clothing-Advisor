@@ -2,16 +2,86 @@
   "config": {
     "step": {
       "user": {
-        "title": "Konfigurer HA Clothing Advisor",
+        "title": "Velg værkilde",
         "description": "Velg vær-entiteten som skal brukes til klesanbefalinger.",
         "data": {
           "weather_entity": "Vær-entitet"
         }
+      },
+      "compatibility": {
+        "title": "Kompatibilitetssjekk",
+        "description": "{report}\n\nDenne vær-entiteten kan brukes. Manglende valgfrie data gir bare redusert presisjon."
+      },
+      "personalize": {
+        "title": "Tilpass anbefalingen",
+        "description": "Profilen forskyver alle grensene samlet. Du kan også finjustere hver grense.",
+        "data": {
+          "profile": "Temperaturprofil",
+          "shorts_threshold": "Shortsgrense",
+          "sweater_threshold": "Gensergrense",
+          "light_jacket_threshold": "Grense for tynn jakke",
+          "heavy_jacket_threshold": "Grense for tykk jakke",
+          "forecast_hours": "Se fremover"
+        },
+        "data_description": {
+          "shorts_threshold": "Ved denne temperaturen eller høyere anbefales normalt shorts.",
+          "sweater_threshold": "Under denne temperaturen anbefales normalt genser.",
+          "light_jacket_threshold": "Under denne temperaturen anbefales normalt tynn jakke.",
+          "heavy_jacket_threshold": "Under denne temperaturen anbefales normalt tykk jakke."
+        }
       }
+    },
+    "error": {
+      "incompatible_weather_entity": "Entiteten må levere temperatur og en støttet prognose.",
+      "invalid_threshold_order": "Grensene må stige i denne rekkefølgen: tykk jakke, genser, tynn jakke, shorts."
     },
     "abort": {
       "already_configured": "Denne vær-entiteten er allerede konfigurert."
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Konfigurer Clothing Advisor",
+        "description": "Endre værkilde, profil, temperaturgrenser eller prognoseperiode.",
+        "data": {
+          "weather_entity": "Vær-entitet",
+          "profile": "Temperaturprofil",
+          "shorts_threshold": "Shortsgrense",
+          "sweater_threshold": "Gensergrense",
+          "light_jacket_threshold": "Grense for tynn jakke",
+          "heavy_jacket_threshold": "Grense for tykk jakke",
+          "forecast_hours": "Se fremover"
+        }
+      }
+    },
+    "error": {
+      "incompatible_weather_entity": "Entiteten må levere temperatur og en støttet prognose.",
+      "invalid_threshold_order": "Grensene må stige i denne rekkefølgen: tykk jakke, genser, tynn jakke, shorts."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "recommendation": {
+        "name": "Klesanbefaling"
+      }
+    }
+  },
+  "selector": {
+    "temperature_profile": {
+      "options": {
+        "cold": "Fryser lett",
+        "normal": "Normal",
+        "warm": "Blir lett varm"
+      }
+    },
+    "forecast_hours": {
+      "options": {
+        "2": "2 timer",
+        "4": "4 timer",
+        "6": "6 timer",
+        "8": "8 timer"
+      }
+    }
   }
 }
-

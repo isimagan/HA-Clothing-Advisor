@@ -2,16 +2,86 @@
   "config": {
     "step": {
       "user": {
-        "title": "Set up HA Clothing Advisor",
+        "title": "Choose weather source",
         "description": "Select the weather entity used for clothing recommendations.",
         "data": {
           "weather_entity": "Weather entity"
         }
+      },
+      "compatibility": {
+        "title": "Compatibility check",
+        "description": "{report}\n\nThis weather entity can be used. Missing optional data only reduces precision."
+      },
+      "personalize": {
+        "title": "Personalize your recommendation",
+        "description": "The profile shifts all thresholds globally. You can also fine-tune each threshold.",
+        "data": {
+          "profile": "Temperature profile",
+          "shorts_threshold": "Shorts threshold",
+          "sweater_threshold": "Sweater threshold",
+          "light_jacket_threshold": "Light jacket threshold",
+          "heavy_jacket_threshold": "Thick jacket threshold",
+          "forecast_hours": "Look ahead"
+        },
+        "data_description": {
+          "shorts_threshold": "Shorts are normally recommended at or above this temperature.",
+          "sweater_threshold": "A sweater is normally recommended below this temperature.",
+          "light_jacket_threshold": "A light jacket is normally recommended below this temperature.",
+          "heavy_jacket_threshold": "A thick jacket is normally recommended below this temperature."
+        }
       }
+    },
+    "error": {
+      "incompatible_weather_entity": "This entity must provide a temperature and a supported forecast.",
+      "invalid_threshold_order": "Thresholds must increase in this order: thick jacket, sweater, light jacket, shorts."
     },
     "abort": {
       "already_configured": "This weather entity is already configured."
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configure Clothing Advisor",
+        "description": "Change the weather source, profile, thresholds, or forecast period.",
+        "data": {
+          "weather_entity": "Weather entity",
+          "profile": "Temperature profile",
+          "shorts_threshold": "Shorts threshold",
+          "sweater_threshold": "Sweater threshold",
+          "light_jacket_threshold": "Light jacket threshold",
+          "heavy_jacket_threshold": "Thick jacket threshold",
+          "forecast_hours": "Look ahead"
+        }
+      }
+    },
+    "error": {
+      "incompatible_weather_entity": "This entity must provide a temperature and a supported forecast.",
+      "invalid_threshold_order": "Thresholds must increase in this order: thick jacket, sweater, light jacket, shorts."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "recommendation": {
+        "name": "Clothing recommendation"
+      }
+    }
+  },
+  "selector": {
+    "temperature_profile": {
+      "options": {
+        "cold": "I get cold easily",
+        "normal": "Normal",
+        "warm": "I get warm easily"
+      }
+    },
+    "forecast_hours": {
+      "options": {
+        "2": "2 hours",
+        "4": "4 hours",
+        "6": "6 hours",
+        "8": "8 hours"
+      }
+    }
   }
 }
-
