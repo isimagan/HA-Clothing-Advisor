@@ -191,7 +191,7 @@ class RecommendationTests(unittest.TestCase):
             DEFAULT_SETTINGS,
             NOW,
         )
-        prefix = "component.clothing_advisor.common.reason."
+        prefix = "component.clothing_advisor.common.reason_"
         translations = {
             f"{prefix}current": "Føles som {temperature} °C nå",
             f"{prefix}warming": "Blir varmere til {temperature} °C",

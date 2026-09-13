@@ -1,12 +1,10 @@
 {
   "common": {
-    "reason": {
-      "current": "Feels like {temperature} °C now",
-      "warming": "Warming to about {temperature} °C",
-      "cooling": "Cooling to about {temperature} °C",
-      "wind": "Wind makes an extra layer useful",
-      "rain": "Rain is possible"
-    }
+    "reason_current": "Feels like {temperature} °C now",
+    "reason_warming": "Warming to about {temperature} °C",
+    "reason_cooling": "Cooling to about {temperature} °C",
+    "reason_wind": "Wind makes an extra layer useful",
+    "reason_rain": "Rain is possible"
   },
   "config": {
     "step": {

@@ -1,12 +1,10 @@
 {
   "common": {
-    "reason": {
-      "current": "Føles som {temperature} °C nå",
-      "warming": "Blir varmere, opptil omtrent {temperature} °C",
-      "cooling": "Blir kaldere, ned mot omtrent {temperature} °C",
-      "wind": "Vinden gjør et ekstra lag nyttig",
-      "rain": "Det kan komme regn"
-    }
+    "reason_current": "Føles som {temperature} °C nå",
+    "reason_warming": "Blir varmere, opptil omtrent {temperature} °C",
+    "reason_cooling": "Blir kaldere, ned mot omtrent {temperature} °C",
+    "reason_wind": "Vinden gjør et ekstra lag nyttig",
+    "reason_rain": "Det kan komme regn"
   },
   "config": {
     "step": {

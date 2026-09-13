@@ -10,7 +10,7 @@ def localized_reason(
     recommendation: ClothingRecommendation, translations: dict[str, str]
 ) -> str:
     """Build a localized human-readable explanation."""
-    prefix = f"component.{DOMAIN}.common.reason."
+    prefix = f"component.{DOMAIN}.common.reason_"
 
     def translated(key: str, fallback: str) -> str:
         return translations.get(f"{prefix}{key}", fallback)
