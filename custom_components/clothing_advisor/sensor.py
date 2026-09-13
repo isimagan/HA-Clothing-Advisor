@@ -7,10 +7,12 @@ from typing import Any
 
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from . import ClothingAdvisorConfigEntry
+from .const import DOMAIN
 from .coordinator import ClothingAdvisorCoordinator
 
 
@@ -36,7 +38,15 @@ class ClothingRecommendationSensor(
         """Initialize the sensor."""
         super().__init__(coordinator)
         assert coordinator.config_entry is not None
-        self._attr_unique_id = coordinator.config_entry.entry_id
+        entry_id = coordinator.config_entry.entry_id
+        self._attr_unique_id = entry_id
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, entry_id)},
+            name="Clothing Advisor",
+            manufacturer="HA Clothing Advisor",
+            model="Forecast-based clothing recommendation",
+            configuration_url="https://github.com/isimagan/HA-Clothing-Advisor",
+        )
 
     @property
     def native_value(self) -> str:

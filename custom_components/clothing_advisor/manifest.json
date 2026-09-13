@@ -5,9 +5,9 @@
   "config_flow": true,
   "dependencies": [],
   "documentation": "https://github.com/isimagan/HA-Clothing-Advisor#readme",
-  "integration_type": "helper",
+  "integration_type": "service",
   "iot_class": "calculated",
   "issue_tracker": "https://github.com/isimagan/HA-Clothing-Advisor/issues",
   "requirements": [],
-  "version": "0.2.0"
+  "version": "0.2.1"
 }

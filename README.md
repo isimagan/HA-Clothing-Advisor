@@ -43,6 +43,15 @@ The sensor exposes structured attributes for dashboards and automations:
 - highest precipitation probability and maximum wind speed
 - forecast type and forecast period
 
+The sensor is attached to a **Clothing Advisor** device, so it can be opened
+from the integration's device page. Raw attributes are also available under
+**Developer tools → States**, or in templates such as:
+
+```jinja2
+{{ state_attr('sensor.clothing_recommendation', 'outerwear') }}
+{{ state_attr('sensor.clothing_recommendation', 'reason') }}
+```
+
 The recommendation engine uses apparent temperature when available and falls
 back to regular temperature. It selects base layers for the current and warmer
 parts of the period, outerwear for the coldest part, and then adjusts for wind
