@@ -7,7 +7,7 @@ from typing import Any
 import voluptuous as vol
 
 from homeassistant import config_entries
-from homeassistant.core import callback
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers import selector
 
@@ -23,6 +23,7 @@ from .const import (
     DEFAULTS,
     DOMAIN,
     PROFILE_COLD,
+    PROFILE_CUSTOM,
     PROFILE_NORMAL,
     PROFILE_WARM,
 )
@@ -44,8 +45,42 @@ def _weather_schema(default: str | None = None) -> vol.Schema:
     )
 
 
-def _personalization_schema(values: dict[str, Any]) -> vol.Schema:
-    """Return the personalization schema with current values as defaults."""
+def _profile_schema(values: dict[str, Any]) -> vol.Schema:
+    """Return the profile and forecast schema with current values as defaults."""
+    return vol.Schema(
+        {
+            vol.Required(
+                CONF_PROFILE, default=values.get(CONF_PROFILE, DEFAULTS[CONF_PROFILE])
+            ): selector.SelectSelector(
+                selector.SelectSelectorConfig(
+                    options=[
+                        PROFILE_COLD,
+                        PROFILE_NORMAL,
+                        PROFILE_WARM,
+                        PROFILE_CUSTOM,
+                    ],
+                    translation_key="temperature_profile",
+                    mode=selector.SelectSelectorMode.DROPDOWN,
+                )
+            ),
+            vol.Required(
+                CONF_FORECAST_HOURS,
+                default=str(
+                    values.get(CONF_FORECAST_HOURS, DEFAULTS[CONF_FORECAST_HOURS])
+                ),
+            ): selector.SelectSelector(
+                selector.SelectSelectorConfig(
+                    options=["2", "4", "6", "8"],
+                    translation_key="forecast_hours",
+                    mode=selector.SelectSelectorMode.DROPDOWN,
+                )
+            ),
+        }
+    )
+
+
+def _threshold_schema(values: dict[str, Any]) -> vol.Schema:
+    """Return the custom temperature threshold schema."""
     temperature_selector = selector.NumberSelector(
         selector.NumberSelectorConfig(
             min=-20,
@@ -57,15 +92,6 @@ def _personalization_schema(values: dict[str, Any]) -> vol.Schema:
     )
     return vol.Schema(
         {
-            vol.Required(
-                CONF_PROFILE, default=values.get(CONF_PROFILE, DEFAULTS[CONF_PROFILE])
-            ): selector.SelectSelector(
-                selector.SelectSelectorConfig(
-                    options=[PROFILE_COLD, PROFILE_NORMAL, PROFILE_WARM],
-                    translation_key="temperature_profile",
-                    mode=selector.SelectSelectorMode.DROPDOWN,
-                )
-            ),
             vol.Required(
                 CONF_SHORTS_THRESHOLD,
                 default=values.get(
@@ -92,18 +118,6 @@ def _personalization_schema(values: dict[str, Any]) -> vol.Schema:
                     DEFAULTS[CONF_HEAVY_JACKET_THRESHOLD],
                 ),
             ): temperature_selector,
-            vol.Required(
-                CONF_FORECAST_HOURS,
-                default=str(
-                    values.get(CONF_FORECAST_HOURS, DEFAULTS[CONF_FORECAST_HOURS])
-                ),
-            ): selector.SelectSelector(
-                selector.SelectSelectorConfig(
-                    options=["2", "4", "6", "8"],
-                    translation_key="forecast_hours",
-                    mode=selector.SelectSelectorMode.DROPDOWN,
-                )
-            ),
         }
     )
 
@@ -165,12 +179,40 @@ def _format_report(report: CompatibilityReport, norwegian: bool) -> str:
 class ClothingAdvisorConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle the HA Clothing Advisor config flow."""
 
-    VERSION = 1
+    VERSION = 2
 
     def __init__(self) -> None:
         """Initialize the flow."""
         self._data: dict[str, Any] = {}
         self._report: CompatibilityReport | None = None
+
+    async def async_migrate_entry(
+        self, hass: HomeAssistant, config_entry: config_entries.ConfigEntry
+    ) -> bool:
+        """Migrate legacy fine-tuned profiles to exact custom thresholds."""
+        if config_entry.version != 1:
+            return True
+
+        data = dict(config_entry.data)
+        options = dict(config_entry.options)
+        effective = DEFAULTS | data | options
+        threshold_keys = tuple(_default_thresholds())
+        if any(
+            effective[key] != DEFAULTS[key]
+            for key in threshold_keys
+        ):
+            adjustment = {
+                PROFILE_COLD: 2,
+                PROFILE_WARM: -2,
+            }.get(effective[CONF_PROFILE], 0)
+            for key in threshold_keys:
+                options[key] = float(effective[key]) + adjustment
+            options[CONF_PROFILE] = PROFILE_CUSTOM
+
+        hass.config_entries.async_update_entry(
+            config_entry, data=data, options=options, version=2
+        )
+        return True
 
     @staticmethod
     @callback
@@ -222,40 +264,58 @@ class ClothingAdvisorConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     async def async_step_personalize(
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
-        """Collect the user's clothing preferences."""
+        """Collect the user's temperature profile and forecast period."""
+        if user_input is not None:
+            user_input[CONF_FORECAST_HOURS] = int(user_input[CONF_FORECAST_HOURS])
+            self._data.update(user_input)
+            if user_input[CONF_PROFILE] == PROFILE_CUSTOM:
+                return await self.async_step_custom()
+            self._data.update(_default_thresholds())
+            return self._create_entry()
+
+        return self.async_show_form(
+            step_id="personalize",
+            data_schema=_profile_schema(user_input or DEFAULTS),
+        )
+
+    async def async_step_custom(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Collect custom clothing temperature thresholds."""
         errors: dict[str, str] = {}
         if user_input is not None:
             if not _valid_thresholds(user_input):
                 errors["base"] = "invalid_threshold_order"
             else:
-                user_input[CONF_FORECAST_HOURS] = int(
-                    user_input[CONF_FORECAST_HOURS]
-                )
                 self._data.update(user_input)
-                weather = self.hass.states.get(self._data[CONF_WEATHER_ENTITY])
-                return self.async_create_entry(
-                    title=(
-                        weather.name
-                        if weather
-                        else self._data[CONF_WEATHER_ENTITY]
-                    ),
-                    data=self._data,
-                )
+                return self._create_entry()
 
         return self.async_show_form(
-            step_id="personalize",
-            data_schema=_personalization_schema(user_input or DEFAULTS),
+            step_id="custom",
+            data_schema=_threshold_schema(user_input or DEFAULTS),
             errors=errors,
+        )
+
+    def _create_entry(self) -> FlowResult:
+        """Create a config entry from the collected settings."""
+        weather = self.hass.states.get(self._data[CONF_WEATHER_ENTITY])
+        return self.async_create_entry(
+            title=weather.name if weather else self._data[CONF_WEATHER_ENTITY],
+            data=self._data,
         )
 
 
 class ClothingAdvisorOptionsFlow(config_entries.OptionsFlow):
     """Allow all Clothing Advisor settings to be changed."""
 
+    def __init__(self) -> None:
+        """Initialize the options flow."""
+        self._data: dict[str, Any] = {}
+
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
-        """Edit the source entity and personal preferences."""
+        """Edit the source entity, profile, and forecast period."""
         current = DEFAULTS | self.config_entry.data | self.config_entry.options
         errors: dict[str, str] = {}
         if user_input is not None:
@@ -264,21 +324,55 @@ class ClothingAdvisorOptionsFlow(config_entries.OptionsFlow):
             )
             if not report.usable:
                 errors["base"] = "incompatible_weather_entity"
-            elif not _valid_thresholds(user_input):
-                errors["base"] = "invalid_threshold_order"
             else:
                 user_input[CONF_FORECAST_HOURS] = int(
                     user_input[CONF_FORECAST_HOURS]
                 )
-                return self.async_create_entry(data=user_input)
+                self._data.update(user_input)
+                if user_input[CONF_PROFILE] == PROFILE_CUSTOM:
+                    return await self.async_step_custom()
+                self._data.update(_default_thresholds())
+                return self.async_create_entry(data=self._data)
 
         schema_values = current | (user_input or {})
         schema = vol.Schema(
             {
                 **_weather_schema(schema_values[CONF_WEATHER_ENTITY]).schema,
-                **_personalization_schema(schema_values).schema,
+                **_profile_schema(schema_values).schema,
             }
         )
         return self.async_show_form(
             step_id="init", data_schema=schema, errors=errors
         )
+
+    async def async_step_custom(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Edit custom clothing temperature thresholds."""
+        current = DEFAULTS | self.config_entry.data | self.config_entry.options
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            if not _valid_thresholds(user_input):
+                errors["base"] = "invalid_threshold_order"
+            else:
+                self._data.update(user_input)
+                return self.async_create_entry(data=self._data)
+
+        return self.async_show_form(
+            step_id="custom",
+            data_schema=_threshold_schema(current | self._data | (user_input or {})),
+            errors=errors,
+        )
+
+
+def _default_thresholds() -> dict[str, Any]:
+    """Return a fresh copy of the normal profile's base thresholds."""
+    return {
+        key: DEFAULTS[key]
+        for key in (
+            CONF_SHORTS_THRESHOLD,
+            CONF_SWEATER_THRESHOLD,
+            CONF_LIGHT_JACKET_THRESHOLD,
+            CONF_HEAVY_JACKET_THRESHOLD,
+        )
+    }

@@ -14,14 +14,20 @@
       },
       "personalize": {
         "title": "Tilpass anbefalingen",
-        "description": "Profilen forskyver alle grensene samlet. Du kan også finjustere hver grense.",
+        "description": "Normal bruker de anbefalte grensene. Velg om du vanligvis fryser eller blir varm lett, eller velg Egendefinert for å sette alle grensene selv.",
         "data": {
           "profile": "Temperaturprofil",
+          "forecast_hours": "Se fremover"
+        }
+      },
+      "custom": {
+        "title": "Egendefinerte temperaturgrenser",
+        "description": "Angi føles som-temperaturen der hvert plagg skal anbefales.",
+        "data": {
           "shorts_threshold": "Shortsgrense",
           "sweater_threshold": "Gensergrense",
           "light_jacket_threshold": "Grense for tynn jakke",
-          "heavy_jacket_threshold": "Grense for tykk jakke",
-          "forecast_hours": "Se fremover"
+          "heavy_jacket_threshold": "Grense for tykk jakke"
         },
         "data_description": {
           "shorts_threshold": "Ved denne temperaturen eller høyere anbefales normalt shorts.",
@@ -43,15 +49,27 @@
     "step": {
       "init": {
         "title": "Konfigurer Clothing Advisor",
-        "description": "Endre værkilde, profil, temperaturgrenser eller prognoseperiode.",
+        "description": "Endre værkilde, temperaturprofil eller prognoseperiode. Egendefinerte grenser vises på neste side når Egendefinert er valgt.",
         "data": {
           "weather_entity": "Vær-entitet",
           "profile": "Temperaturprofil",
+          "forecast_hours": "Se fremover"
+        }
+      },
+      "custom": {
+        "title": "Egendefinerte temperaturgrenser",
+        "description": "Angi føles som-temperaturen der hvert plagg skal anbefales.",
+        "data": {
           "shorts_threshold": "Shortsgrense",
           "sweater_threshold": "Gensergrense",
           "light_jacket_threshold": "Grense for tynn jakke",
-          "heavy_jacket_threshold": "Grense for tykk jakke",
-          "forecast_hours": "Se fremover"
+          "heavy_jacket_threshold": "Grense for tykk jakke"
+        },
+        "data_description": {
+          "shorts_threshold": "Ved denne temperaturen eller høyere anbefales normalt shorts.",
+          "sweater_threshold": "Ved eller under denne temperaturen anbefales normalt genser som mellomlag.",
+          "light_jacket_threshold": "Under denne temperaturen anbefales normalt tynn jakke.",
+          "heavy_jacket_threshold": "Under denne temperaturen anbefales normalt tykk jakke."
         }
       }
     },
@@ -72,7 +90,8 @@
       "options": {
         "cold": "Fryser lett",
         "normal": "Normal",
-        "warm": "Blir lett varm"
+        "warm": "Blir lett varm",
+        "custom": "Egendefinert"
       }
     },
     "forecast_hours": {

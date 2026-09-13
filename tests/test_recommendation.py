@@ -162,6 +162,21 @@ class RecommendationTests(unittest.TestCase):
             "Shorts",
         )
 
+    def test_custom_profile_uses_exact_thresholds(self) -> None:
+        """The custom profile does not add a profile temperature adjustment."""
+        weather = snapshot(
+            17,
+            [{"datetime": "2026-09-13T10:00:00+00:00", "temperature": 17}],
+        )
+        custom = DEFAULT_SETTINGS | {
+            const.CONF_PROFILE: const.PROFILE_CUSTOM,
+            const.CONF_SHORTS_THRESHOLD: 17,
+        }
+        self.assertEqual(
+            recommendation.build_recommendation(weather, custom, NOW).bottom,
+            "Shorts",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

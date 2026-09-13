@@ -11,6 +11,7 @@ CONF_HEAVY_JACKET_THRESHOLD = "heavy_jacket_threshold"
 CONF_FORECAST_HOURS = "forecast_hours"
 
 PROFILE_COLD = "cold"
+PROFILE_CUSTOM = "custom"
 PROFILE_NORMAL = "normal"
 PROFILE_WARM = "warm"
 

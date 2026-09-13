@@ -14,14 +14,20 @@
       },
       "personalize": {
         "title": "Personalize your recommendation",
-        "description": "The profile shifts all thresholds globally. You can also fine-tune each threshold.",
+        "description": "Normal uses the recommended thresholds. Choose whether you generally get cold or warm easily, or select Custom to set every threshold yourself.",
         "data": {
           "profile": "Temperature profile",
+          "forecast_hours": "Look ahead"
+        }
+      },
+      "custom": {
+        "title": "Custom temperature thresholds",
+        "description": "Set the feels-like temperatures at which each garment should be recommended.",
+        "data": {
           "shorts_threshold": "Shorts threshold",
           "sweater_threshold": "Sweater threshold",
           "light_jacket_threshold": "Light jacket threshold",
-          "heavy_jacket_threshold": "Thick jacket threshold",
-          "forecast_hours": "Look ahead"
+          "heavy_jacket_threshold": "Thick jacket threshold"
         },
         "data_description": {
           "shorts_threshold": "Shorts are normally recommended at or above this temperature.",
@@ -43,15 +49,27 @@
     "step": {
       "init": {
         "title": "Configure Clothing Advisor",
-        "description": "Change the weather source, profile, thresholds, or forecast period.",
+        "description": "Change the weather source, temperature profile, or forecast period. Custom thresholds are shown on the next page when Custom is selected.",
         "data": {
           "weather_entity": "Weather entity",
           "profile": "Temperature profile",
+          "forecast_hours": "Look ahead"
+        }
+      },
+      "custom": {
+        "title": "Custom temperature thresholds",
+        "description": "Set the feels-like temperatures at which each garment should be recommended.",
+        "data": {
           "shorts_threshold": "Shorts threshold",
           "sweater_threshold": "Sweater threshold",
           "light_jacket_threshold": "Light jacket threshold",
-          "heavy_jacket_threshold": "Thick jacket threshold",
-          "forecast_hours": "Look ahead"
+          "heavy_jacket_threshold": "Thick jacket threshold"
+        },
+        "data_description": {
+          "shorts_threshold": "Shorts are normally recommended at or above this temperature.",
+          "sweater_threshold": "A sweater mid-layer is normally recommended at or below this temperature.",
+          "light_jacket_threshold": "A light jacket is normally recommended below this temperature.",
+          "heavy_jacket_threshold": "A thick jacket is normally recommended below this temperature."
         }
       }
     },
@@ -72,7 +90,8 @@
       "options": {
         "cold": "I get cold easily",
         "normal": "Normal",
-        "warm": "I get warm easily"
+        "warm": "I get warm easily",
+        "custom": "Custom"
       }
     },
     "forecast_hours": {

@@ -18,8 +18,8 @@ The setup wizard guides you through three steps:
 1. Select a `weather.*` entity.
 2. Review a compatibility report for temperature, forecast, apparent
    temperature, wind, precipitation, gusts, and UV data.
-3. Choose a temperature profile and optionally adjust the clothing thresholds
-   and forecast period.
+3. Choose a temperature profile and forecast period. Selecting **Custom** opens
+   a separate page where each clothing threshold can be adjusted.
 
 The selected entity must provide a current temperature and at least one
 supported forecast type. Hourly forecasts give the best results; twice-daily
@@ -74,9 +74,10 @@ The default settings are:
 | Forecast period | 4 hours |
 
 The **I get cold easily** profile shifts clothing thresholds 2 °C warmer. The
-**I get warm easily** profile shifts them 2 °C cooler. All settings, including
-the weather entity, can be changed later from the integration's **Configure**
-dialog without removing and re-adding it.
+**I get warm easily** profile shifts them 2 °C cooler. **Custom** uses the exact
+thresholds entered on the following page. All settings, including the weather
+entity, can be changed later from the integration's **Configure** dialog without
+removing and re-adding it.
 
 ## Manual installation
 
