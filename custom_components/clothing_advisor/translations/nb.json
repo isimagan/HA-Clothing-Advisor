@@ -1,0 +1,17 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Konfigurer HA Clothing Advisor",
+        "description": "Velg vær-entiteten som skal brukes til klesanbefalinger.",
+        "data": {
+          "weather_entity": "Vær-entitet"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "Denne vær-entiteten er allerede konfigurert."
+    }
+  }
+}
+

@@ -1,0 +1,17 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Set up HA Clothing Advisor",
+        "description": "Select the weather entity used for clothing recommendations.",
+        "data": {
+          "weather_entity": "Weather entity"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "This weather entity is already configured."
+    }
+  }
+}
+

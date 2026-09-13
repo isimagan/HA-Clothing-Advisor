@@ -1,0 +1,14 @@
+{
+  "domain": "clothing_advisor",
+  "name": "HA Clothing Advisor",
+  "codeowners": ["@isimagan"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/isimagan/HA-Clothing-Advisor#readme",
+  "integration_type": "helper",
+  "iot_class": "calculated",
+  "issue_tracker": "https://github.com/isimagan/HA-Clothing-Advisor/issues",
+  "requirements": [],
+  "version": "0.1.0"
+}
+
