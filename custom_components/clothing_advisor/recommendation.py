@@ -40,6 +40,8 @@ class ClothingRecommendation:
 
     state: str
     bottom: str
+    base_layer: str
+    mid_layer: str | None
     top: str
     outerwear: str
     rain: bool
@@ -93,7 +95,9 @@ def build_recommendation(
 
     bottom = "Shorts" if current_feels >= shorts_threshold else "Trousers"
     top_temperature = high if high - current_feels >= 4 else current_feels
-    top = "Sweater" if top_temperature < sweater_threshold else "T-shirt"
+    base_layer = "T-shirt"
+    mid_layer = "Sweater" if top_temperature <= sweater_threshold else None
+    top = f"{base_layer} + {mid_layer}" if mid_layer else base_layer
 
     if low < heavy_jacket_threshold:
         outerwear = "Thick jacket"
@@ -151,9 +155,16 @@ def build_recommendation(
         reason_parts.append("rain is possible")
     reason = ". ".join(reason_parts) + "."
 
+    state_layers = [bottom, base_layer]
+    if mid_layer:
+        state_layers.append(mid_layer)
+    state_layers.append(outerwear)
+
     return ClothingRecommendation(
-        state=f"{bottom} · {top} · {outerwear}",
+        state=" · ".join(state_layers),
         bottom=bottom,
+        base_layer=base_layer,
+        mid_layer=mid_layer,
         top=top,
         outerwear=outerwear,
         rain=rain,

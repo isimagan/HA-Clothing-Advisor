@@ -36,7 +36,8 @@ Trousers · T-shirt · Light jacket
 
 The sensor exposes structured attributes for dashboards and automations:
 
-- `bottom`, `top`, and `outerwear`
+- `bottom`, `base_layer`, `mid_layer`, and `outerwear`
+- `top`, retained as a combined compatibility value
 - `rain` and a human-readable `reason`
 - current and apparent temperature
 - lowest and highest apparent temperature in the selected period
@@ -53,9 +54,11 @@ from the integration's device page. Raw attributes are also available under
 ```
 
 The recommendation engine uses apparent temperature when available and falls
-back to regular temperature. It selects base layers for the current and warmer
-parts of the period, outerwear for the coldest part, and then adjusts for wind
-and rain.
+back to regular temperature. A T-shirt is the base layer, while a sweater is an
+optional mid-layer selected independently of outerwear. This supports both
+`T-shirt · Light jacket` and `T-shirt · Sweater · Light jacket`. The engine
+selects removable layers for temperature changes and then adjusts outerwear for
+wind and rain.
 
 ## Personalization
 

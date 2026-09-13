@@ -25,7 +25,7 @@
         },
         "data_description": {
           "shorts_threshold": "Shorts are normally recommended at or above this temperature.",
-          "sweater_threshold": "A sweater is normally recommended below this temperature.",
+          "sweater_threshold": "A sweater mid-layer is normally recommended at or below this temperature.",
           "light_jacket_threshold": "A light jacket is normally recommended below this temperature.",
           "heavy_jacket_threshold": "A thick jacket is normally recommended below this temperature."
         }

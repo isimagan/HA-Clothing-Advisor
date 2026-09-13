@@ -111,6 +111,40 @@ class RecommendationTests(unittest.TestCase):
         self.assertEqual(result.outerwear, "Rain jacket")
         self.assertTrue(result.rain)
 
+    def test_sweater_is_an_optional_mid_layer(self) -> None:
+        """Cold steady weather adds a sweater between T-shirt and jacket."""
+        result = recommendation.build_recommendation(
+            snapshot(
+                12,
+                [
+                    {"datetime": "2026-09-13T10:00:00+00:00", "temperature": 12}
+                ],
+            ),
+            DEFAULT_SETTINGS,
+            NOW,
+        )
+        self.assertEqual(result.base_layer, "T-shirt")
+        self.assertEqual(result.mid_layer, "Sweater")
+        self.assertEqual(result.top, "T-shirt + Sweater")
+        self.assertEqual(
+            result.state, "Trousers · T-shirt · Sweater · Light jacket"
+        )
+
+    def test_jacket_does_not_require_sweater(self) -> None:
+        """Mild weather can recommend a T-shirt and jacket without a sweater."""
+        result = recommendation.build_recommendation(
+            snapshot(
+                14,
+                [
+                    {"datetime": "2026-09-13T10:00:00+00:00", "temperature": 14}
+                ],
+            ),
+            DEFAULT_SETTINGS,
+            NOW,
+        )
+        self.assertIsNone(result.mid_layer)
+        self.assertEqual(result.state, "Trousers · T-shirt · Light jacket")
+
     def test_profiles_shift_thresholds(self) -> None:
         """Cold and warm profiles shift the shorts threshold by two degrees."""
         weather = snapshot(

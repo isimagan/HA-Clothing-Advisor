@@ -25,7 +25,7 @@
         },
         "data_description": {
           "shorts_threshold": "Ved denne temperaturen eller høyere anbefales normalt shorts.",
-          "sweater_threshold": "Under denne temperaturen anbefales normalt genser.",
+          "sweater_threshold": "Ved eller under denne temperaturen anbefales normalt genser som mellomlag.",
           "light_jacket_threshold": "Under denne temperaturen anbefales normalt tynn jakke.",
           "heavy_jacket_threshold": "Under denne temperaturen anbefales normalt tykk jakke."
         }
