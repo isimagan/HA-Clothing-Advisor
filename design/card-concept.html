@@ -1,0 +1,992 @@
+<!doctype html>
+<html lang="nb">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Clothing Advisor – kortkonsept</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --page: #eef3f7;
+        --card: rgba(255, 255, 255, 0.94);
+        --card-solid: #ffffff;
+        --text: #17212b;
+        --muted: #65727e;
+        --line: rgba(23, 33, 43, 0.09);
+        --blue: #0788df;
+        --cyan: #04c6ce;
+        --yellow: #ffca3a;
+        --blue-soft: #eaf7ff;
+        --shadow: 0 24px 65px rgba(29, 53, 74, 0.13);
+        --small-shadow: 0 12px 35px rgba(29, 53, 74, 0.1);
+        --radius: 26px;
+      }
+
+      [data-theme="dark"] {
+        color-scheme: dark;
+        --page: #0d141a;
+        --card: rgba(26, 35, 43, 0.94);
+        --card-solid: #1a232b;
+        --text: #eef7fb;
+        --muted: #9eacb7;
+        --line: rgba(255, 255, 255, 0.09);
+        --blue: #38aaf5;
+        --cyan: #26d8d5;
+        --yellow: #ffd34f;
+        --blue-soft: #132f40;
+        --shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+        --small-shadow: 0 12px 35px rgba(0, 0, 0, 0.26);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        min-height: 100vh;
+        margin: 0;
+        background:
+          radial-gradient(circle at 12% 10%, rgba(4, 198, 206, 0.14), transparent 29rem),
+          radial-gradient(circle at 90% 0%, rgba(7, 136, 223, 0.14), transparent 32rem),
+          var(--page);
+        color: var(--text);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        transition: background 180ms ease, color 180ms ease;
+      }
+
+      button {
+        color: inherit;
+        font: inherit;
+      }
+
+      .page {
+        width: min(1180px, calc(100% - 36px));
+        margin: 0 auto;
+        padding: 36px 0 70px;
+      }
+
+      .toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        margin-bottom: 34px;
+      }
+
+      .brand-lockup {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+      }
+
+      .brand-lockup img {
+        width: 46px;
+        height: 46px;
+        border-radius: 14px;
+        box-shadow: var(--small-shadow);
+      }
+
+      .eyebrow {
+        margin: 0 0 2px;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 750;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(19px, 3vw, 25px);
+        letter-spacing: -0.025em;
+      }
+
+      .icon-button {
+        display: grid;
+        width: 42px;
+        height: 42px;
+        place-items: center;
+        border: 1px solid var(--line);
+        border-radius: 50%;
+        background: var(--card);
+        box-shadow: var(--small-shadow);
+        cursor: pointer;
+      }
+
+      .scenario-bar {
+        display: flex;
+        width: fit-content;
+        max-width: 100%;
+        margin: 0 auto 28px;
+        padding: 5px;
+        gap: 4px;
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--card);
+        box-shadow: var(--small-shadow);
+      }
+
+      .scenario-bar button {
+        min-width: max-content;
+        padding: 9px 14px;
+        border: 0;
+        border-radius: 11px;
+        background: transparent;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .scenario-bar button[aria-pressed="true"] {
+        background: var(--blue-soft);
+        color: var(--blue);
+      }
+
+      .stage {
+        display: grid;
+        grid-template-columns: minmax(320px, 390px) minmax(520px, 1fr);
+        align-items: start;
+        gap: 34px;
+      }
+
+      .caption {
+        margin: 0 0 10px 5px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 750;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .card {
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--card);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(18px);
+      }
+
+      .compact-card {
+        position: sticky;
+        top: 24px;
+        padding: 20px;
+      }
+
+      .compact-head,
+      .detail-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .title-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .weather-mark {
+        display: grid;
+        width: 38px;
+        height: 38px;
+        place-items: center;
+        border-radius: 13px;
+        background: var(--blue-soft);
+        color: var(--blue);
+      }
+
+      .card-title {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 760;
+      }
+
+      .card-subtitle {
+        margin: 2px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .temperature {
+        text-align: right;
+      }
+
+      .temperature strong {
+        display: block;
+        font-size: 22px;
+        letter-spacing: -0.04em;
+      }
+
+      .temperature span {
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .recommendation {
+        margin: 22px 0 18px;
+      }
+
+      .recommendation h2 {
+        max-width: 320px;
+        margin: 0;
+        font-size: 27px;
+        line-height: 1.08;
+        letter-spacing: -0.045em;
+      }
+
+      .recommendation p {
+        margin: 8px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .outfit-strip {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+      }
+
+      .garment-tile {
+        min-width: 0;
+        padding: 12px 8px 10px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: color-mix(in srgb, var(--card-solid) 86%, var(--blue-soft));
+        text-align: center;
+      }
+
+      .garment-tile svg {
+        width: 29px;
+        height: 29px;
+        margin-bottom: 6px;
+        color: var(--blue);
+      }
+
+      .garment-tile strong {
+        display: block;
+        overflow: hidden;
+        font-size: 11px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .garment-tile span {
+        display: block;
+        margin-top: 2px;
+        color: var(--muted);
+        font-size: 10px;
+      }
+
+      .compact-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 17px;
+        padding-top: 15px;
+        border-top: 1px solid var(--line);
+      }
+
+      .forecast-summary {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .more-button {
+        padding: 8px 12px;
+        border: 0;
+        border-radius: 11px;
+        background: var(--blue-soft);
+        color: var(--blue);
+        font-size: 12px;
+        font-weight: 760;
+        cursor: pointer;
+      }
+
+      .detail-card {
+        min-height: 590px;
+      }
+
+      .detail-hero {
+        position: relative;
+        padding: 24px 26px 25px;
+        background:
+          radial-gradient(circle at 88% 10%, rgba(255, 202, 58, 0.36), transparent 11rem),
+          linear-gradient(135deg, rgba(7, 136, 223, 0.14), rgba(4, 198, 206, 0.08));
+      }
+
+      .detail-hero::after {
+        position: absolute;
+        right: 28px;
+        bottom: -40px;
+        width: 125px;
+        height: 125px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.14);
+        content: "";
+      }
+
+      .status-dot {
+        display: inline-block;
+        width: 7px;
+        height: 7px;
+        margin-right: 6px;
+        border-radius: 50%;
+        background: #25b875;
+        box-shadow: 0 0 0 4px rgba(37, 184, 117, 0.13);
+      }
+
+      .hero-main {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 22px;
+        margin-top: 27px;
+      }
+
+      .hero-main h2 {
+        max-width: 430px;
+        margin: 0;
+        font-size: clamp(30px, 4.3vw, 44px);
+        line-height: 1.02;
+        letter-spacing: -0.055em;
+      }
+
+      .hero-temp {
+        min-width: 95px;
+        text-align: right;
+      }
+
+      .hero-temp strong {
+        display: block;
+        font-size: 42px;
+        letter-spacing: -0.06em;
+      }
+
+      .hero-temp span {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .detail-body {
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        gap: 0;
+      }
+
+      .panel {
+        padding: 24px 26px 27px;
+      }
+
+      .panel + .panel {
+        border-left: 1px solid var(--line);
+      }
+
+      .section-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 15px;
+      }
+
+      .section-title h3 {
+        margin: 0;
+        font-size: 14px;
+      }
+
+      .profile-chip {
+        padding: 5px 9px;
+        border-radius: 999px;
+        background: var(--blue-soft);
+        color: var(--blue);
+        font-size: 10px;
+        font-weight: 760;
+      }
+
+      .layer-list {
+        display: grid;
+        gap: 9px;
+      }
+
+      .layer-row {
+        display: grid;
+        grid-template-columns: 42px 1fr auto;
+        align-items: center;
+        gap: 12px;
+        padding: 11px 12px;
+        border: 1px solid var(--line);
+        border-radius: 15px;
+        background: color-mix(in srgb, var(--card-solid) 92%, var(--blue-soft));
+      }
+
+      .layer-icon {
+        display: grid;
+        width: 38px;
+        height: 38px;
+        place-items: center;
+        border-radius: 12px;
+        background: var(--blue-soft);
+        color: var(--blue);
+      }
+
+      .layer-icon svg {
+        width: 22px;
+        height: 22px;
+      }
+
+      .layer-row strong {
+        display: block;
+        font-size: 13px;
+      }
+
+      .layer-row span {
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .layer-state {
+        color: #1e9b65 !important;
+        font-size: 10px !important;
+        font-weight: 750;
+      }
+
+      .reason-box {
+        margin-top: 18px;
+        padding: 15px;
+        border-radius: 16px;
+        background: var(--blue-soft);
+      }
+
+      .reason-box strong {
+        display: block;
+        margin-bottom: 5px;
+        color: var(--blue);
+        font-size: 11px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .reason-box p {
+        margin: 0;
+        font-size: 12px;
+        line-height: 1.55;
+      }
+
+      .forecast-chart {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        align-items: end;
+        height: 137px;
+        margin-top: 10px;
+        padding: 9px 0 24px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .forecast-chart::before,
+      .forecast-chart::after {
+        position: absolute;
+        right: 0;
+        left: 0;
+        height: 1px;
+        background: var(--line);
+        content: "";
+      }
+
+      .forecast-chart::before {
+        top: 35%;
+      }
+
+      .forecast-chart::after {
+        top: 68%;
+      }
+
+      .forecast-point {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        height: var(--height);
+        align-items: center;
+        flex-direction: column;
+        justify-content: flex-start;
+      }
+
+      .forecast-point::before {
+        width: 9px;
+        height: 9px;
+        border: 3px solid var(--card-solid);
+        border-radius: 50%;
+        background: var(--blue);
+        box-shadow: 0 0 0 2px var(--blue);
+        content: "";
+      }
+
+      .forecast-point strong {
+        margin-top: 7px;
+        font-size: 11px;
+      }
+
+      .forecast-point span {
+        position: absolute;
+        bottom: -23px;
+        color: var(--muted);
+        font-size: 10px;
+      }
+
+      .metric-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        margin-top: 20px;
+      }
+
+      .metric {
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+      }
+
+      .metric span {
+        display: block;
+        margin-bottom: 4px;
+        color: var(--muted);
+        font-size: 10px;
+      }
+
+      .metric strong {
+        font-size: 14px;
+      }
+
+      .updated {
+        margin: 17px 0 0;
+        color: var(--muted);
+        font-size: 10px;
+        text-align: center;
+      }
+
+      svg {
+        display: block;
+        fill: none;
+        stroke: currentColor;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 1.8;
+      }
+
+      dialog {
+        width: min(720px, calc(100% - 24px));
+        max-height: calc(100vh - 24px);
+        padding: 0;
+        overflow: auto;
+        border: 0;
+        border-radius: var(--radius);
+        background: transparent;
+        color: inherit;
+        box-shadow: var(--shadow);
+      }
+
+      dialog::backdrop {
+        background: rgba(4, 12, 18, 0.55);
+        backdrop-filter: blur(8px);
+      }
+
+      dialog:not([open]) {
+        display: none;
+      }
+
+      .dialog-close {
+        position: absolute;
+        z-index: 3;
+        top: 16px;
+        right: 16px;
+        border: 1px solid var(--line);
+        background: var(--card);
+        box-shadow: none;
+      }
+
+      @media (max-width: 850px) {
+        .stage {
+          grid-template-columns: 1fr;
+        }
+
+        .desktop-detail {
+          display: none;
+        }
+
+        .compact-card {
+          position: static;
+          max-width: 430px;
+          margin: auto;
+        }
+
+      }
+
+      @media (max-width: 560px) {
+        .page {
+          width: min(100% - 22px, 430px);
+          padding-top: 18px;
+        }
+
+        .toolbar {
+          margin-bottom: 22px;
+        }
+
+        .scenario-bar {
+          justify-content: flex-start;
+          margin-bottom: 18px;
+        }
+
+        .detail-body {
+          grid-template-columns: 1fr;
+        }
+
+        .panel + .panel {
+          border-top: 1px solid var(--line);
+          border-left: 0;
+        }
+
+        .hero-main {
+          align-items: flex-start;
+          flex-direction: column-reverse;
+        }
+
+        .hero-temp {
+          text-align: left;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <svg width="0" height="0" aria-hidden="true" style="position: absolute">
+      <symbol id="icon-cloud-sun" viewBox="0 0 24 24">
+        <path d="M16 4.5V2.8M20.7 6.3l1.2-1.2M18 11h2.2M11.3 6.3 10 5.1" />
+        <path d="M14.4 7.1A4.7 4.7 0 0 1 20 12" />
+        <path d="M6.7 18.7h10.1a3.7 3.7 0 0 0 .4-7.4A5.7 5.7 0 0 0 6.4 9.9a4.4 4.4 0 0 0 .3 8.8Z" />
+      </symbol>
+      <symbol id="icon-shirt" viewBox="0 0 24 24">
+        <path d="m8 4-5 3 2 4 3-1v10h8V10l3 1 2-4-5-3c-.6 1.4-2 2-4 2S8.6 5.4 8 4Z" />
+      </symbol>
+      <symbol id="icon-jacket" viewBox="0 0 24 24">
+        <path d="m9 4-4 2-2 8 3 1 1-4v9h10v-9l1 4 3-1-2-8-4-2c-.4 1.2-1.4 2-3 2s-2.6-.8-3-2Z" />
+        <path d="M12 6v14M9.5 10 12 7.5l2.5 2.5M9 15h2M13 15h2" />
+      </symbol>
+      <symbol id="icon-trousers" viewBox="0 0 24 24">
+        <path d="M7 3h10l1 17h-5l-1-10-1 10H6L7 3Z" />
+        <path d="M7 7h10M12 3v7" />
+      </symbol>
+      <symbol id="icon-more" viewBox="0 0 24 24">
+        <circle cx="5" cy="12" r="1" />
+        <circle cx="12" cy="12" r="1" />
+        <circle cx="19" cy="12" r="1" />
+      </symbol>
+      <symbol id="icon-clock" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="8.5" />
+        <path d="M12 7v5l3.2 2" />
+      </symbol>
+      <symbol id="icon-moon" viewBox="0 0 24 24">
+        <path d="M20 15.7A8 8 0 0 1 8.3 4 8.5 8.5 0 1 0 20 15.7Z" />
+      </symbol>
+      <symbol id="icon-close" viewBox="0 0 24 24">
+        <path d="m6 6 12 12M18 6 6 18" />
+      </symbol>
+    </svg>
+
+    <main class="page">
+      <header class="toolbar">
+        <div class="brand-lockup">
+          <img
+            src="../custom_components/clothing_advisor/brand/icon.png"
+            alt="Clothing Advisor"
+          />
+          <div>
+            <p class="eyebrow">Designstudie</p>
+            <h1>Clothing Advisor</h1>
+          </div>
+        </div>
+        <button class="icon-button" id="themeButton" aria-label="Bytt fargetema">
+          <svg width="20" height="20"><use href="#icon-moon" /></svg>
+        </button>
+      </header>
+
+      <nav class="scenario-bar" aria-label="Velg værscenario">
+        <button data-scenario="mild" aria-pressed="true">☀️ Mildt</button>
+        <button data-scenario="warming" aria-pressed="false">🌤️ Kald morgen</button>
+        <button data-scenario="rain" aria-pressed="false">🌧️ Regn</button>
+        <button data-scenario="cold" aria-pressed="false">❄️ Kaldt</button>
+      </nav>
+
+      <section class="stage">
+        <div>
+          <p class="caption">Lite dashboardkort</p>
+          <article class="card compact-card">
+            <div class="compact-head">
+              <div class="title-row">
+                <div class="weather-mark">
+                  <svg width="24" height="24"><use href="#icon-cloud-sun" /></svg>
+                </div>
+                <div>
+                  <p class="card-title">Klesråd</p>
+                  <p class="card-subtitle">De neste 4 timene</p>
+                </div>
+              </div>
+              <div class="temperature">
+                <strong data-field="temperature">14°</strong>
+                <span>føles som</span>
+              </div>
+            </div>
+
+            <div class="recommendation">
+              <h2 data-field="headline">T-skjorte og tynn jakke</h2>
+              <p data-field="summary">Stabilt og opphold. Jakken kan bli liggende åpen.</p>
+            </div>
+
+            <div class="outfit-strip" data-field="compactLayers"></div>
+
+            <footer class="compact-footer">
+              <div class="forecast-summary">
+                <svg width="15" height="15"><use href="#icon-clock" /></svg>
+                <span data-field="range">12°–16°</span>
+              </div>
+              <button class="more-button" id="openDialog">Se hvorfor</button>
+            </footer>
+          </article>
+        </div>
+
+        <div class="desktop-detail">
+          <p class="caption">Mer informasjon</p>
+          <div data-detail-host></div>
+        </div>
+      </section>
+    </main>
+
+    <dialog id="detailDialog" class="mobile-detail">
+      <button class="icon-button dialog-close" id="closeDialog" aria-label="Lukk">
+        <svg width="19" height="19"><use href="#icon-close" /></svg>
+      </button>
+      <div data-dialog-host></div>
+    </dialog>
+
+    <template id="detailTemplate">
+      <article class="card detail-card">
+        <header class="detail-hero">
+          <div class="detail-head">
+            <div>
+              <p class="eyebrow"><span class="status-dot"></span>Oppdatert nå</p>
+              <p class="card-title">Klesanbefaling</p>
+            </div>
+          </div>
+          <div class="hero-main">
+            <h2 data-field="headline">T-skjorte og tynn jakke</h2>
+            <div class="hero-temp">
+              <strong data-field="temperature">14°</strong>
+              <span>føles som nå</span>
+            </div>
+          </div>
+        </header>
+
+        <div class="detail-body">
+          <section class="panel">
+            <div class="section-title">
+              <h3>Antrekket ditt</h3>
+              <span class="profile-chip">Normal profil</span>
+            </div>
+            <div class="layer-list" data-field="detailLayers"></div>
+            <div class="reason-box">
+              <strong>Hvorfor dette?</strong>
+              <p data-field="reason"></p>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="section-title">
+              <h3>Været fremover</h3>
+              <span class="card-subtitle">4 timer</span>
+            </div>
+            <div class="forecast-chart" data-field="forecast"></div>
+            <div class="metric-grid">
+              <div class="metric">
+                <span>Laveste</span>
+                <strong data-field="low">12 °C</strong>
+              </div>
+              <div class="metric">
+                <span>Høyeste</span>
+                <strong data-field="high">16 °C</strong>
+              </div>
+              <div class="metric">
+                <span>Vind</span>
+                <strong data-field="wind">3 m/s</strong>
+              </div>
+              <div class="metric">
+                <span>Regn</span>
+                <strong data-field="rain">10 %</strong>
+              </div>
+            </div>
+            <p class="updated">Basert på Forecast Home · oppdatert 10:32</p>
+          </section>
+        </div>
+      </article>
+    </template>
+
+    <script>
+      const scenarios = {
+        mild: {
+          temperature: 14,
+          headline: "T-skjorte og tynn jakke",
+          summary: "Stabilt og opphold. Jakken kan bli liggende åpen.",
+          reason: "Føles som 14 °C nå. Temperaturen holder seg stabil, og det er lite vind og lav sannsynlighet for regn.",
+          low: 12,
+          high: 16,
+          wind: "3 m/s",
+          rain: "10 %",
+          layers: [
+            ["trousers", "Bukse", "Underlag", "icon-trousers"],
+            ["tshirt", "T-skjorte", "Basislag", "icon-shirt"],
+            ["jacket", "Tynn jakke", "Ytterlag", "icon-jacket"],
+          ],
+          forecast: [["Nå", 14], ["11", 15], ["12", 16], ["13", 15], ["14", 14]],
+        },
+        warming: {
+          temperature: 12,
+          headline: "T-skjorte og tynn jakke",
+          summary: "Kjølig nå, men det blir raskt varmere. Velg lag som kan tas av.",
+          reason: "Føles som 12 °C nå. Det blir varmere, opptil omtrent 18 °C. En tynn jakke er enkel å ta av senere.",
+          low: 12,
+          high: 18,
+          wind: "2 m/s",
+          rain: "5 %",
+          layers: [
+            ["trousers", "Bukse", "Underlag", "icon-trousers"],
+            ["tshirt", "T-skjorte", "Basislag", "icon-shirt"],
+            ["jacket", "Tynn jakke", "Ytterlag", "icon-jacket"],
+          ],
+          forecast: [["Nå", 12], ["11", 14], ["12", 16], ["13", 17], ["14", 18]],
+        },
+        rain: {
+          temperature: 16,
+          headline: "T-skjorte og regnjakke",
+          summary: "Mildt, men regn er sannsynlig. Prioriter et vanntett ytterlag.",
+          reason: "Føles som 16 °C nå. Det kan komme regn, med høyeste sannsynlighet på 75 prosent.",
+          low: 14,
+          high: 16,
+          wind: "5 m/s",
+          rain: "75 %",
+          layers: [
+            ["trousers", "Bukse", "Underlag", "icon-trousers"],
+            ["tshirt", "T-skjorte", "Basislag", "icon-shirt"],
+            ["jacket", "Regnjakke", "Ytterlag", "icon-jacket"],
+          ],
+          forecast: [["Nå", 16], ["11", 16], ["12", 15], ["13", 14], ["14", 14]],
+        },
+        cold: {
+          temperature: 4,
+          headline: "Genser og tykk jakke",
+          summary: "Kaldt og litt vind. Flere lag holder bedre på varmen.",
+          reason: "Føles som 4 °C nå. Vinden gjør et ekstra lag nyttig, og temperaturen synker mot 2 °C.",
+          low: 2,
+          high: 5,
+          wind: "9 m/s",
+          rain: "20 %",
+          layers: [
+            ["trousers", "Bukse", "Underlag", "icon-trousers"],
+            ["tshirt", "T-skjorte + genser", "Basis + mellomlag", "icon-shirt"],
+            ["jacket", "Tykk jakke", "Ytterlag", "icon-jacket"],
+          ],
+          forecast: [["Nå", 4], ["11", 5], ["12", 4], ["13", 3], ["14", 2]],
+        },
+      };
+
+      const detailTemplate = document.querySelector("#detailTemplate");
+      const detailHost = document.querySelector("[data-detail-host]");
+      const dialogHost = document.querySelector("[data-dialog-host]");
+      const dialog = document.querySelector("#detailDialog");
+
+      detailHost.append(detailTemplate.content.cloneNode(true));
+      dialogHost.append(detailTemplate.content.cloneNode(true));
+
+      const garmentTile = ([, name, type, icon]) => `
+        <div class="garment-tile">
+          <svg><use href="#${icon}"></use></svg>
+          <strong>${name}</strong>
+          <span>${type}</span>
+        </div>`;
+
+      const layerRow = ([, name, type, icon]) => `
+        <div class="layer-row">
+          <div class="layer-icon"><svg><use href="#${icon}"></use></svg></div>
+          <div><strong>${name}</strong><span>${type}</span></div>
+          <span class="layer-state">Anbefalt</span>
+        </div>`;
+
+      function renderForecast(points) {
+        const values = points.map(([, value]) => value);
+        const min = Math.min(...values);
+        const max = Math.max(...values);
+        const span = Math.max(max - min, 1);
+        return points
+          .map(([time, value]) => {
+            const height = 42 + ((value - min) / span) * 55;
+            return `<div class="forecast-point" style="--height:${height}px">
+              <strong>${value}°</strong><span>${time}</span>
+            </div>`;
+          })
+          .join("");
+      }
+
+      function setField(root, field, value, html = false) {
+        root.querySelectorAll(`[data-field="${field}"]`).forEach((element) => {
+          if (html) element.innerHTML = value;
+          else element.textContent = value;
+        });
+      }
+
+      function render(name) {
+        const data = scenarios[name];
+        document.querySelectorAll("[data-scenario]").forEach((button) => {
+          button.setAttribute("aria-pressed", button.dataset.scenario === name);
+        });
+        document.querySelectorAll(".compact-card, .detail-card").forEach((card) => {
+          setField(card, "temperature", `${data.temperature}°`);
+          setField(card, "headline", data.headline);
+          setField(card, "summary", data.summary);
+          setField(card, "range", `${data.low}°–${data.high}°`);
+          setField(card, "compactLayers", data.layers.map(garmentTile).join(""), true);
+          setField(card, "detailLayers", data.layers.map(layerRow).join(""), true);
+          setField(card, "reason", data.reason);
+          setField(card, "forecast", renderForecast(data.forecast), true);
+          setField(card, "low", `${data.low} °C`);
+          setField(card, "high", `${data.high} °C`);
+          setField(card, "wind", data.wind);
+          setField(card, "rain", data.rain);
+        });
+      }
+
+      document.querySelectorAll("[data-scenario]").forEach((button) => {
+        button.addEventListener("click", () => render(button.dataset.scenario));
+      });
+
+      document.querySelector("#themeButton").addEventListener("click", () => {
+        const root = document.documentElement;
+        root.dataset.theme = root.dataset.theme === "dark" ? "light" : "dark";
+      });
+
+      document.querySelector("#openDialog").addEventListener("click", () => {
+        if (window.innerWidth <= 850) dialog.showModal();
+        else detailHost.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+      document.querySelector("#closeDialog").addEventListener("click", () => dialog.close());
+      dialog.addEventListener("click", (event) => {
+        if (event.target === dialog) dialog.close();
+      });
+
+      render("mild");
+    </script>
+  </body>
+</html>
