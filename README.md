@@ -25,6 +25,22 @@ The selected entity must provide a current temperature and at least one
 supported forecast type. Hourly forecasts give the best results; twice-daily
 and daily forecasts are supported with reduced precision.
 
+## Dashboard card
+
+The integration bundles a compact dashboard card and registers it automatically.
+After restarting Home Assistant, add a manual card with:
+
+```yaml
+type: custom:clothing-advisor-card
+entity: sensor.clothing_recommendation
+```
+
+The card is also available in the dashboard card picker. It shows the current
+recommendation, feels-like temperature, clothing layers, and forecast range.
+Select **See why** to open a mobile-friendly detail view with the explanation
+and weather factors used by the recommendation. The card follows the active
+Home Assistant theme and supports English and Norwegian.
+
 ## Recommendation sensor
 
 The integration creates one **Clothing recommendation** sensor. A typical state

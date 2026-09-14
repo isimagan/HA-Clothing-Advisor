@@ -10,6 +10,18 @@ on:
 permissions: {}
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Test recommendation engine
+        run: python -m unittest discover -s tests -v
+      - name: Test dashboard card
+        run: node tests/frontend_smoke_test.js
+
   validate-hacs:
     runs-on: ubuntu-latest
     steps:
@@ -24,4 +36,3 @@ jobs:
       - uses: actions/checkout@v4
       - name: Hassfest validation
         uses: home-assistant/actions/hassfest@master
-

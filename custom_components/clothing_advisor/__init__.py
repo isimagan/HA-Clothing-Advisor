@@ -1,9 +1,14 @@
 """HA Clothing Advisor integration."""
 
+from pathlib import Path
+
+from homeassistant.components.frontend import add_extra_js_url
+from homeassistant.components.http import StaticPathConfig
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.event import async_track_state_change_event
+from homeassistant.helpers.typing import ConfigType
 
 from .const import (
     CONF_HEAVY_JACKET_THRESHOLD,
@@ -20,8 +25,20 @@ from .const import (
 from .coordinator import ClothingAdvisorCoordinator
 
 PLATFORMS = [Platform.SENSOR]
+CARD_URL = "/clothing_advisor/clothing-advisor-card.js"
+CARD_VERSION = "0.6.0"
+CARD_PATH = Path(__file__).parent / "frontend" / "clothing-advisor-card.js"
 
 ClothingAdvisorConfigEntry = ConfigEntry[ClothingAdvisorCoordinator]
+
+
+async def async_setup(hass: HomeAssistant, _config: ConfigType) -> bool:
+    """Register the bundled dashboard card."""
+    await hass.http.async_register_static_paths(
+        [StaticPathConfig(CARD_URL, str(CARD_PATH), False)]
+    )
+    add_extra_js_url(hass, f"{CARD_URL}?v={CARD_VERSION}")
+    return True
 
 
 async def async_migrate_entry(
