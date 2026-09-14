@@ -7,6 +7,7 @@ from homeassistant.components.http import StaticPathConfig
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.event import async_track_state_change_event
 from homeassistant.helpers.typing import ConfigType
 
@@ -18,6 +19,7 @@ from .const import (
     CONF_SWEATER_THRESHOLD,
     CONF_WEATHER_ENTITY,
     DEFAULTS,
+    DOMAIN,
     PROFILE_COLD,
     PROFILE_CUSTOM,
     PROFILE_WARM,
@@ -28,6 +30,8 @@ PLATFORMS = [Platform.SENSOR]
 CARD_URL = "/clothing_advisor/clothing-advisor-card.js"
 CARD_VERSION = "0.6.0"
 CARD_PATH = Path(__file__).parent / "frontend" / "clothing-advisor-card.js"
+
+CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
 ClothingAdvisorConfigEntry = ConfigEntry[ClothingAdvisorCoordinator]
 
