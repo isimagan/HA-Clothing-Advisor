@@ -66,6 +66,7 @@ const VALUE_FALLBACKS = {
     sweater: "Sweater",
     t_shirt_sweater: "T-shirt + sweater",
     no_jacket: "No jacket",
+    vest: "Vest",
     light_jacket: "Light jacket",
     thick_jacket: "Thick jacket",
     rain_jacket: "Rain jacket",
@@ -81,6 +82,7 @@ const VALUE_FALLBACKS = {
     sweater: "Genser",
     t_shirt_sweater: "T-skjorte + genser",
     no_jacket: "Ingen jakke",
+    vest: "Vest",
     light_jacket: "Tynn jakke",
     thick_jacket: "Tykk jakke",
     rain_jacket: "Regnjakke",
@@ -95,6 +97,7 @@ const ICONS = {
   weather: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 4.5V2.8M20.7 6.3l1.2-1.2M18 11h2.2M11.3 6.3 10 5.1"/><path d="M14.4 7.1A4.7 4.7 0 0 1 20 12"/><path d="M6.7 18.7h10.1a3.7 3.7 0 0 0 .4-7.4A5.7 5.7 0 0 0 6.4 9.9a4.4 4.4 0 0 0 .3 8.8Z"/></svg>`,
   shirt: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 4-5 3 2 4 3-1v10h8V10l3 1 2-4-5-3c-.6 1.4-2 2-4 2S8.6 5.4 8 4Z"/></svg>`,
   jacket: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 4-4 2-2 8 3 1 1-4v9h10v-9l1 4 3-1-2-8-4-2c-.4 1.2-1.4 2-3 2s-2.6-.8-3-2Z"/><path d="M12 6v14M9.5 10 12 7.5l2.5 2.5M9 15h2M13 15h2"/></svg>`,
+  vest: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 3-3 2-2 8 3 1 1-4v10h10V10l1 4 3-1-2-8-3-2-2 3h-4L8 3Z"/><path d="M12 6v14M8 3l4 7 4-7M9 15h2M13 15h2"/></svg>`,
   trousers: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10l1 17h-5l-1-10-1 10H6L7 3Z"/><path d="M7 7h10M12 3v7"/></svg>`,
   clock: `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.2 2"/></svg>`,
   close: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>`,
@@ -142,7 +145,7 @@ const STYLE = `
   .garment {
     display: flex; min-width: 0; min-height: 38px; align-items: center; padding: 8px;
     gap: 6px; border: 1px solid var(--ca-line); border-radius: 12px;
-    background: color-mix(in srgb, var(--ha-card-background, #fff) 91%, var(--ca-soft));
+    background: #fff; color: #17212b;
   }
   .garment .icon { width: 17px; height: 17px; flex: 0 0 auto; color: var(--ca-blue); }
   .garment strong { overflow: hidden; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
@@ -191,11 +194,12 @@ const STYLE = `
   .layer {
     display: grid; grid-template-columns: 32px 1fr auto; align-items: center; gap: 10px;
     padding: 8px 10px; border: 1px solid var(--ca-line); border-radius: 13px;
+    background: #fff; color: #17212b;
   }
   .layer-icon { width: 32px; height: 32px; padding: 7px; border-radius: 11px; }
   .layer strong, .layer span { display: block; }
   .layer strong { font-size: 12px; }
-  .layer span { color: var(--ca-muted); font-size: 10px; }
+  .layer span { color: #65727e; font-size: 10px; }
   .recommended { color: #1e9b65 !important; font-size: 9px !important; font-weight: 700; }
   .reason { margin-top: 12px; padding: 11px 12px; border-radius: 13px; background: var(--ca-soft); }
   .reason strong { display: block; margin-bottom: 4px; color: var(--ca-blue); font-size: 9px; text-transform: uppercase; letter-spacing: .06em; }
@@ -209,8 +213,8 @@ const STYLE = `
   .chevron { display: grid; width: 27px; height: 27px; place-items: center; border-radius: 50%; background: var(--ca-soft); color: var(--ca-blue); transition: transform 160ms ease; }
   details[open] .chevron { transform: rotate(180deg); }
   .metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: 7px; padding: 0 20px 16px; }
-  .metric { padding: 10px; border: 1px solid var(--ca-line); border-radius: 12px; }
-  .metric span { display: block; margin-bottom: 3px; color: var(--ca-muted); font-size: 9px; }
+  .metric { padding: 10px; border: 1px solid var(--ca-line); border-radius: 12px; background: #fff; color: #17212b; }
+  .metric span { display: block; margin-bottom: 3px; color: #65727e; font-size: 9px; }
   .metric strong { font-size: 12px; }
   .source { grid-column: 1 / -1; margin: 5px 0 0; color: var(--ca-muted); font-size: 9px; text-align: center; }
   .error { padding: 20px; }
@@ -359,7 +363,7 @@ class ClothingAdvisorCard extends HTMLElement {
           <div class="layer-list">
             ${this._layer("trousers", values.bottom, text.bottom)}
             ${this._layer("shirt", values.top, text.top)}
-            ${this._layer("jacket", values.outerwear, text.outerwear)}
+            ${this._layer(stateObj.attributes.outerwear === "vest" ? "vest" : "jacket", values.outerwear, text.outerwear)}
           </div>
           <div class="reason"><strong>${escapeHtml(text.why)}</strong><p>${escapeHtml(values.reason)}</p></div>
         </section>
@@ -431,7 +435,7 @@ class ClothingAdvisorCard extends HTMLElement {
         <div class="garments">
           ${this._garment("trousers", values.bottom)}
           ${this._garment("shirt", values.top)}
-          ${this._garment("jacket", values.outerwear)}
+          ${this._garment(stateObj.attributes.outerwear === "vest" ? "vest" : "jacket", values.outerwear)}
         </div>
         <div class="footer"><span class="range"><span class="icon">${ICONS.clock}</span>${escapeHtml(values.range)}</span><button class="more" type="button">${escapeHtml(text.seeWhy)}</button></div>
       </ha-card>

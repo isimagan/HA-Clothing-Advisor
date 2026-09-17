@@ -25,6 +25,7 @@ BASE_LAYER = "t_shirt"
 MID_LAYERS = (None, "sweater")
 OUTERWEAR = (
     "no_jacket",
+    "vest",
     "light_jacket",
     "thick_jacket",
     "rain_jacket",
@@ -35,6 +36,7 @@ RECOMMENDATION_STATES = tuple(
     for bottom in BOTTOMS
     for mid_layer in MID_LAYERS
     for outerwear in OUTERWEAR
+    if outerwear != "vest" or mid_layer == "sweater"
 )
 
 
@@ -160,6 +162,11 @@ def build_recommendation(
     )
     if rain and outerwear in {"no_jacket", "light_jacket"}:
         outerwear = "rain_jacket"
+    elif not rain and mid_layer == "sweater" and outerwear == "light_jacket" and (
+        max_wind is None or max_wind <= 8
+    ):
+        # A vest replaces the light jacket only over a sweater in dry, calm weather.
+        outerwear = "vest"
 
     reason_parts = [f"Feels like {current_feels:.1f} °C now"]
     if high - current_feels >= 4:

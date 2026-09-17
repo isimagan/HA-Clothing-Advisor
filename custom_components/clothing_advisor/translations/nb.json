@@ -96,6 +96,7 @@
           "shorts_t_shirt_rain_jacket": "Shorts · T-skjorte · Regnjakke",
           "shorts_t_shirt_thick_waterproof_jacket": "Shorts · T-skjorte · Tykk vanntett jakke",
           "shorts_t_shirt_sweater_no_jacket": "Shorts · T-skjorte · Genser · Ingen jakke",
+          "shorts_t_shirt_sweater_vest": "Shorts · T-skjorte · Genser · Vest",
           "shorts_t_shirt_sweater_light_jacket": "Shorts · T-skjorte · Genser · Tynn jakke",
           "shorts_t_shirt_sweater_thick_jacket": "Shorts · T-skjorte · Genser · Tykk jakke",
           "shorts_t_shirt_sweater_rain_jacket": "Shorts · T-skjorte · Genser · Regnjakke",
@@ -106,6 +107,7 @@
           "trousers_t_shirt_rain_jacket": "Bukse · T-skjorte · Regnjakke",
           "trousers_t_shirt_thick_waterproof_jacket": "Bukse · T-skjorte · Tykk vanntett jakke",
           "trousers_t_shirt_sweater_no_jacket": "Bukse · T-skjorte · Genser · Ingen jakke",
+          "trousers_t_shirt_sweater_vest": "Bukse · T-skjorte · Genser · Vest",
           "trousers_t_shirt_sweater_light_jacket": "Bukse · T-skjorte · Genser · Tynn jakke",
           "trousers_t_shirt_sweater_thick_jacket": "Bukse · T-skjorte · Genser · Tykk jakke",
           "trousers_t_shirt_sweater_rain_jacket": "Bukse · T-skjorte · Genser · Regnjakke",
@@ -130,6 +132,7 @@
           "outerwear": {
             "state": {
               "no_jacket": "Ingen jakke",
+              "vest": "Vest",
               "light_jacket": "Tynn jakke",
               "thick_jacket": "Tykk jakke",
               "rain_jacket": "Regnjakke",

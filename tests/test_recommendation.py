@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 import importlib.util
+import json
 from pathlib import Path
 import sys
 from types import ModuleType
@@ -113,7 +114,7 @@ class RecommendationTests(unittest.TestCase):
         self.assertTrue(result.rain)
 
     def test_sweater_is_an_optional_mid_layer(self) -> None:
-        """Cold steady weather adds a sweater between T-shirt and jacket."""
+        """A dry, calm day can use a vest over a sweater instead of a jacket."""
         result = recommendation.build_recommendation(
             snapshot(
                 12,
@@ -127,9 +128,61 @@ class RecommendationTests(unittest.TestCase):
         self.assertEqual(result.base_layer, "t_shirt")
         self.assertEqual(result.mid_layer, "sweater")
         self.assertEqual(result.top, "t_shirt_sweater")
-        self.assertEqual(
-            result.state, "trousers_t_shirt_sweater_light_jacket"
+        self.assertEqual(result.outerwear, "vest")
+        self.assertEqual(result.state, "trousers_t_shirt_sweater_vest")
+
+    def test_vest_never_appears_without_sweater_or_with_jacket(self) -> None:
+        """Vest is an outer layer, not a standalone mid-layer or extra jacket."""
+        self.assertTrue(
+            all(
+                "_sweater_vest" in state
+                for state in recommendation.RECOMMENDATION_STATES
+                if state.endswith("_vest")
+            )
         )
+        for condition, wind_speed, temperature, expected in (
+            ("rainy", None, 12, "rain_jacket"),
+            ("sunny", 9, 12, "light_jacket"),
+            ("sunny", None, 5, "thick_jacket"),
+        ):
+            with self.subTest(
+                condition=condition,
+                wind_speed=wind_speed,
+                temperature=temperature,
+            ):
+                result = recommendation.build_recommendation(
+                    snapshot(
+                        temperature,
+                        [
+                            {
+                                "datetime": "2026-09-13T10:00:00+00:00",
+                                "temperature": temperature,
+                            }
+                        ],
+                        condition=condition,
+                        wind_speed=wind_speed,
+                    ),
+                    DEFAULT_SETTINGS,
+                    NOW,
+                )
+                self.assertEqual(result.mid_layer, "sweater")
+                self.assertEqual(result.outerwear, expected)
+
+    def test_every_recommendation_state_has_translations(self) -> None:
+        """All enum values are translated for English and Norwegian users."""
+        for filename in (
+            "strings.json",
+            "translations/en.json",
+            "translations/nb.json",
+        ):
+            with self.subTest(filename=filename):
+                translations = json.loads((PACKAGE_PATH / filename).read_text())
+                states = translations["entity"]["sensor"]["recommendation"]["state"]
+                self.assertEqual(set(states), set(recommendation.RECOMMENDATION_STATES))
+                outerwear = translations["entity"]["sensor"]["recommendation"][
+                    "state_attributes"
+                ]["outerwear"]["state"]
+                self.assertEqual(set(outerwear), set(recommendation.OUTERWEAR))
 
     def test_jacket_does_not_require_sweater(self) -> None:
         """Mild weather can recommend a T-shirt and jacket without a sweater."""

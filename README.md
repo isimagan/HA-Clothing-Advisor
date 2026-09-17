@@ -86,10 +86,11 @@ from the integration's device page. Raw attributes are also available under
 
 The recommendation engine uses apparent temperature when available and falls
 back to regular temperature. A T-shirt is the base layer, while a sweater is an
-optional mid-layer selected independently of outerwear. This supports both
-`T-shirt · Light jacket` and `T-shirt · Sweater · Light jacket`. The engine
-selects removable layers for temperature changes and then adjusts outerwear for
-wind and rain.
+optional mid-layer. In dry, calm weather, a vest can replace a light jacket
+over the sweater; a vest is never recommended without a sweater or together
+with a jacket. Colder, windy, or rainy conditions keep the appropriate jacket.
+The engine selects removable layers for temperature changes and then adjusts
+outerwear for wind and rain.
 
 English and Norwegian translations are included for the complete recommendation,
 individual clothing attributes, forecast type, and the human-readable reason.

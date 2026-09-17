@@ -114,4 +114,33 @@ if (!badge.shadowRoot.innerHTML.includes('label="Clothing advice"')) {
   throw new Error("English badge label did not render");
 }
 
+const vestState = {
+  ...card._hass.states["sensor.clothing_recommendation"],
+  state: "trousers_t_shirt_sweater_vest",
+  attributes: {
+    ...card._hass.states["sensor.clothing_recommendation"].attributes,
+    mid_layer: "sweater",
+    top: "t_shirt_sweater",
+    outerwear: "vest",
+  },
+};
+card.hass = {
+  ...card._hass,
+  states: { "sensor.clothing_recommendation": vestState },
+  formatEntityAttributeValue: (_state, attribute) => ({
+    bottom: "Bukse",
+    top: "T-skjorte + genser",
+    outerwear: "Vest",
+    forecast_type: "Hver time",
+  })[attribute],
+};
+if (!card.shadowRoot.innerHTML.includes("T-skjorte + genser og vest")) {
+  throw new Error("Vest recommendation did not render");
+}
+if (!/\.garment \{[^}]*background: #fff; color: #17212b;/s.test(card.shadowRoot.innerHTML) ||
+    !/\.layer \{[^}]*background: #fff; color: #17212b;/s.test(card.shadowRoot.innerHTML) ||
+    !/\.metric \{[^}]*background: #fff; color: #17212b;/s.test(card.shadowRoot.innerHTML)) {
+  throw new Error("White boxes need dark text in dark themes");
+}
+
 console.log("Frontend card and badge registration, localization, and detail view passed");

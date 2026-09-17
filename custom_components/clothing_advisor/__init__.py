@@ -28,7 +28,7 @@ from .coordinator import ClothingAdvisorCoordinator
 
 PLATFORMS = [Platform.SENSOR]
 CARD_URL = "/clothing_advisor/clothing-advisor-card.js"
-CARD_VERSION = "0.7.0"
+CARD_VERSION = "0.8.0"
 CARD_PATH = Path(__file__).parent / "frontend" / "clothing-advisor-card.js"
 
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)

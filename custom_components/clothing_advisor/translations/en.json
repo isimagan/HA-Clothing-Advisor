@@ -96,6 +96,7 @@
           "shorts_t_shirt_rain_jacket": "Shorts · T-shirt · Rain jacket",
           "shorts_t_shirt_thick_waterproof_jacket": "Shorts · T-shirt · Thick waterproof jacket",
           "shorts_t_shirt_sweater_no_jacket": "Shorts · T-shirt · Sweater · No jacket",
+          "shorts_t_shirt_sweater_vest": "Shorts · T-shirt · Sweater · Vest",
           "shorts_t_shirt_sweater_light_jacket": "Shorts · T-shirt · Sweater · Light jacket",
           "shorts_t_shirt_sweater_thick_jacket": "Shorts · T-shirt · Sweater · Thick jacket",
           "shorts_t_shirt_sweater_rain_jacket": "Shorts · T-shirt · Sweater · Rain jacket",
@@ -106,6 +107,7 @@
           "trousers_t_shirt_rain_jacket": "Trousers · T-shirt · Rain jacket",
           "trousers_t_shirt_thick_waterproof_jacket": "Trousers · T-shirt · Thick waterproof jacket",
           "trousers_t_shirt_sweater_no_jacket": "Trousers · T-shirt · Sweater · No jacket",
+          "trousers_t_shirt_sweater_vest": "Trousers · T-shirt · Sweater · Vest",
           "trousers_t_shirt_sweater_light_jacket": "Trousers · T-shirt · Sweater · Light jacket",
           "trousers_t_shirt_sweater_thick_jacket": "Trousers · T-shirt · Sweater · Thick jacket",
           "trousers_t_shirt_sweater_rain_jacket": "Trousers · T-shirt · Sweater · Rain jacket",
@@ -130,6 +132,7 @@
           "outerwear": {
             "state": {
               "no_jacket": "No jacket",
+              "vest": "Vest",
               "light_jacket": "Light jacket",
               "thick_jacket": "Thick jacket",
               "rain_jacket": "Rain jacket",
