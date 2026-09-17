@@ -1,4 +1,5 @@
 const CARD_TAG = "clothing-advisor-card";
+const BADGE_TAG = "clothing-advisor-badge";
 
 const TEXT = {
   en: {
@@ -215,6 +216,7 @@ const STYLE = `
   .error { padding: 20px; }
   .error strong { display: block; margin-bottom: 5px; }
   .error span { color: var(--ca-muted); font-size: 12px; }
+  ha-badge { --badge-color: var(--ca-blue); }
   @media (min-width: 600px) { .overlay { align-items: center; padding: 24px; } }
 `;
 
@@ -378,16 +380,7 @@ class ClothingAdvisorCard extends HTMLElement {
     </div>`;
   }
 
-  _render() {
-    if (!this._config || !this._hass) return;
-    const text = this._text();
-    const stateObj = this._hass.states[this._config.entity];
-    if (!stateObj) {
-      this.shadowRoot.innerHTML = `<style>${STYLE}</style><ha-card><div class="error"><strong>${escapeHtml(text.missing)}</strong><span>${escapeHtml(text.configure)}</span></div></ha-card>`;
-      return;
-    }
-
-    const hours = stateObj.attributes.forecast_hours ?? 4;
+  _values(stateObj) {
     const values = {
       headline: this._headline(stateObj),
       bottom: this._attribute(stateObj, "bottom"),
@@ -399,6 +392,33 @@ class ClothingAdvisorCard extends HTMLElement {
       high: this._number(stateObj.attributes.highest_apparent_temperature),
     };
     values.range = `${values.low}°–${values.high}°`;
+    return values;
+  }
+
+  _wireDetailEvents() {
+    this.shadowRoot.querySelector(".close")?.addEventListener("click", () => {
+      this._detailsOpen = false;
+      this._render();
+    });
+    this.shadowRoot.querySelector(".overlay")?.addEventListener("click", (event) => {
+      if (event.target.classList.contains("overlay")) {
+        this._detailsOpen = false;
+        this._render();
+      }
+    });
+  }
+
+  _render() {
+    if (!this._config || !this._hass) return;
+    const text = this._text();
+    const stateObj = this._hass.states[this._config.entity];
+    if (!stateObj) {
+      this.shadowRoot.innerHTML = `<style>${STYLE}</style><ha-card><div class="error"><strong>${escapeHtml(text.missing)}</strong><span>${escapeHtml(text.configure)}</span></div></ha-card>`;
+      return;
+    }
+
+    const hours = stateObj.attributes.forecast_hours ?? 4;
+    const values = this._values(stateObj);
     const title = this._config.name || text.title;
 
     this.shadowRoot.innerHTML = `<style>${STYLE}</style>
@@ -421,15 +441,74 @@ class ClothingAdvisorCard extends HTMLElement {
       this._detailsOpen = true;
       this._render();
     });
-    this.shadowRoot.querySelector(".close")?.addEventListener("click", () => {
-      this._detailsOpen = false;
-      this._render();
-    });
-    this.shadowRoot.querySelector(".overlay")?.addEventListener("click", (event) => {
-      if (event.target.classList.contains("overlay")) {
-        this._detailsOpen = false;
+    this._wireDetailEvents();
+  }
+}
+
+class ClothingAdvisorBadge extends ClothingAdvisorCard {
+  static getConfigElement() {
+    return document.createElement("clothing-advisor-badge-editor");
+  }
+
+  _render() {
+    if (!this._config || !this._hass) return;
+    const text = this._text();
+    const stateObj = this._hass.states[this._config.entity];
+    const values = stateObj ? this._values(stateObj) : null;
+    const label = this._config.name || text.title;
+    const content = values ? `${values.temperature}°` : text.missing;
+    this.shadowRoot.innerHTML = `<style>${STYLE}</style>
+      <ha-badge type="button" label="${escapeHtml(label)}" aria-label="${escapeHtml(`${label}: ${content}`)}">
+        <ha-icon slot="icon" icon="mdi:tshirt-crew"></ha-icon>${escapeHtml(content)}
+      </ha-badge>
+      ${this._detailsOpen && stateObj ? this._detail(stateObj, values) : ""}`;
+
+    const badge = this.shadowRoot.querySelector("ha-badge");
+    if (stateObj) {
+      badge?.addEventListener("click", () => {
+        this._detailsOpen = true;
         this._render();
-      }
+      });
+      badge?.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          this._detailsOpen = true;
+          this._render();
+        }
+      });
+    }
+    this._wireDetailEvents();
+  }
+}
+
+class ClothingAdvisorBadgeEditor extends HTMLElement {
+  setConfig(config) {
+    this._config = config;
+    this._render();
+  }
+
+  set hass(hass) {
+    this._hass = hass;
+    this._render();
+  }
+
+  _render() {
+    if (!this._hass || !this._config) return;
+    this.innerHTML = `<ha-entity-picker include-domains='["sensor"]'></ha-entity-picker>`;
+    const picker = this.querySelector("ha-entity-picker");
+    picker.hass = this._hass;
+    picker.label = /^(nb|nn|no)(-|$)/i.test(this._hass.locale?.language || "")
+      ? "Klesråd-sensor" : "Clothing Advisor sensor";
+    picker.value = this._config.entity || "";
+    picker.addEventListener("value-changed", (event) => {
+      const entity = event.detail.value;
+      if (!entity || entity === this._config.entity) return;
+      this._config = { ...this._config, entity };
+      this.dispatchEvent(new CustomEvent("config-changed", {
+        bubbles: true,
+        composed: true,
+        detail: { config: this._config },
+      }));
     });
   }
 }
@@ -446,6 +525,12 @@ function escapeHtml(value) {
 if (!customElements.get(CARD_TAG)) {
   customElements.define(CARD_TAG, ClothingAdvisorCard);
 }
+if (!customElements.get(BADGE_TAG)) {
+  customElements.define(BADGE_TAG, ClothingAdvisorBadge);
+}
+if (!customElements.get("clothing-advisor-badge-editor")) {
+  customElements.define("clothing-advisor-badge-editor", ClothingAdvisorBadgeEditor);
+}
 
 window.customCards = window.customCards || [];
 if (!window.customCards.some((card) => card.type === CARD_TAG)) {
@@ -460,5 +545,15 @@ if (!window.customCards.some((card) => card.type === CARD_TAG)) {
         ? { entity: entityId }
         : null;
     },
+  });
+}
+
+window.customBadges = window.customBadges || [];
+if (!window.customBadges.some((badge) => badge.type === BADGE_TAG)) {
+  window.customBadges.push({
+    type: BADGE_TAG,
+    name: "Clothing Advisor",
+    description: "A localized clothing advice badge with detailed recommendations.",
+    preview: true,
   });
 }

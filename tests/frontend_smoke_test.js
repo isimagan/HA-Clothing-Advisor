@@ -73,4 +73,45 @@ if (context.window.customCards.length !== 1) {
   throw new Error("Card picker registration failed");
 }
 
-console.log("Frontend card registration and Norwegian render passed");
+const Badge = registry.get("clothing-advisor-badge");
+if (!Badge || context.window.customBadges.length !== 1) {
+  throw new Error("Badge picker registration failed");
+}
+
+const badge = new Badge();
+const listeners = new Map();
+badge.shadowRoot.querySelector = (selector) => ({
+  addEventListener: (type, handler) => listeners.set(`${selector}:${type}`, handler),
+});
+badge.setConfig({ entity: "sensor.clothing_recommendation" });
+badge.hass = card._hass;
+if (!badge.shadowRoot.innerHTML.includes('<ha-badge type="button" label="Klesråd"')) {
+  throw new Error("Translated badge label or ha-badge wrapper missing");
+}
+if (!badge.shadowRoot.innerHTML.includes('icon="mdi:tshirt-crew"')) {
+  throw new Error("T-shirt icon missing");
+}
+listeners.get("ha-badge:click")();
+if (!badge.shadowRoot.innerHTML.includes('role="dialog"') ||
+    !badge.shadowRoot.innerHTML.includes("Føles som 14 °C nå.")) {
+  throw new Error("Badge did not open the shared detail view");
+}
+listeners.get(".close:click")();
+if (badge.shadowRoot.innerHTML.includes('role="dialog"')) {
+  throw new Error("Badge detail view did not close");
+}
+let prevented = false;
+listeners.get("ha-badge:keydown")({
+  key: "Enter",
+  preventDefault: () => { prevented = true; },
+});
+if (!prevented || !badge.shadowRoot.innerHTML.includes('role="dialog"')) {
+  throw new Error("Badge keyboard activation failed");
+}
+listeners.get(".close:click")();
+badge.hass = { ...card._hass, locale: { language: "en" } };
+if (!badge.shadowRoot.innerHTML.includes('label="Clothing advice"')) {
+  throw new Error("English badge label did not render");
+}
+
+console.log("Frontend card and badge registration, localization, and detail view passed");

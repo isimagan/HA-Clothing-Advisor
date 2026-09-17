@@ -41,6 +41,19 @@ Select **See why** to open a mobile-friendly detail view with the explanation
 and weather factors used by the recommendation. The card follows the active
 Home Assistant theme and supports English and Norwegian.
 
+## Dashboard badge
+
+The integration also adds a badge to the dashboard badge picker. It uses a
+T-shirt icon, a translated **Clothing advice / Klesråd** label, and the current
+feels-like temperature. Selecting it opens the same detail view as **See why**
+on the card. To add it manually to a view's badges:
+
+```yaml
+badges:
+  - type: custom:clothing-advisor-badge
+    entity: sensor.clothing_recommendation
+```
+
 ## Recommendation sensor
 
 The integration creates one **Clothing recommendation** sensor. A typical state
