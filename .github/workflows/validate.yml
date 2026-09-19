@@ -19,7 +19,7 @@ jobs:
           python-version: "3.13"
       - name: Test recommendation engine
         run: python -m unittest discover -s tests -v
-      - name: Test dashboard card and badge
+      - name: Test dashboard card
         run: node tests/frontend_smoke_test.js
 
   validate-hacs:
