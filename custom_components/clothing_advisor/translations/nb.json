@@ -23,8 +23,7 @@
         "title": "Tilpass anbefalingen",
         "description": "Normal bruker de anbefalte grensene. Velg om du vanligvis fryser eller blir varm lett, eller velg Egendefinert for å sette alle grensene selv.",
         "data": {
-          "profile": "Temperaturprofil",
-          "forecast_hours": "Se fremover"
+          "profile": "Temperaturprofil"
         }
       },
       "custom": {
@@ -56,11 +55,10 @@
     "step": {
       "init": {
         "title": "Konfigurer Clothing Advisor",
-        "description": "Endre værkilde, temperaturprofil eller prognoseperiode. Egendefinerte grenser vises på neste side når Egendefinert er valgt.",
+        "description": "Endre værkilde eller temperaturprofil. Egendefinerte grenser vises på neste side når Egendefinert er valgt.",
         "data": {
           "weather_entity": "Vær-entitet",
-          "profile": "Temperaturprofil",
-          "forecast_hours": "Se fremover"
+          "profile": "Temperaturprofil"
         }
       },
       "custom": {
@@ -148,6 +146,20 @@
           }
         }
       }
+    },
+    "select": {
+      "forecast_hours": {
+        "name": "Se fremover",
+        "state": {
+          "2": "2 timer",
+          "4": "4 timer",
+          "6": "6 timer",
+          "8": "8 timer",
+          "12": "12 timer",
+          "16": "16 timer",
+          "24": "24 timer"
+        }
+      }
     }
   },
   "selector": {
@@ -157,14 +169,6 @@
         "normal": "Normal",
         "warm": "Blir lett varm",
         "custom": "Egendefinert"
-      }
-    },
-    "forecast_hours": {
-      "options": {
-        "2": "2 timer",
-        "4": "4 timer",
-        "6": "6 timer",
-        "8": "8 timer"
       }
     }
   }

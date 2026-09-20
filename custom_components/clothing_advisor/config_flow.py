@@ -46,7 +46,7 @@ def _weather_schema(default: str | None = None) -> vol.Schema:
 
 
 def _profile_schema(values: dict[str, Any]) -> vol.Schema:
-    """Return the profile and forecast schema with current values as defaults."""
+    """Return the temperature profile schema with the current value as default."""
     return vol.Schema(
         {
             vol.Required(
@@ -60,18 +60,6 @@ def _profile_schema(values: dict[str, Any]) -> vol.Schema:
                         PROFILE_CUSTOM,
                     ],
                     translation_key="temperature_profile",
-                    mode=selector.SelectSelectorMode.DROPDOWN,
-                )
-            ),
-            vol.Required(
-                CONF_FORECAST_HOURS,
-                default=str(
-                    values.get(CONF_FORECAST_HOURS, DEFAULTS[CONF_FORECAST_HOURS])
-                ),
-            ): selector.SelectSelector(
-                selector.SelectSelectorConfig(
-                    options=["2", "4", "6", "8"],
-                    translation_key="forecast_hours",
                     mode=selector.SelectSelectorMode.DROPDOWN,
                 )
             ),
@@ -236,9 +224,8 @@ class ClothingAdvisorConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     async def async_step_personalize(
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
-        """Collect the user's temperature profile and forecast period."""
+        """Collect the user's temperature profile."""
         if user_input is not None:
-            user_input[CONF_FORECAST_HOURS] = int(user_input[CONF_FORECAST_HOURS])
             self._data.update(user_input)
             if user_input[CONF_PROFILE] == PROFILE_CUSTOM:
                 return await self.async_step_custom()
@@ -287,8 +274,11 @@ class ClothingAdvisorOptionsFlow(config_entries.OptionsFlow):
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
-        """Edit the source entity, profile, and forecast period."""
+        """Edit the source entity and temperature profile."""
         current = DEFAULTS | self.config_entry.data | self.config_entry.options
+        self._data.setdefault(
+            CONF_FORECAST_HOURS, int(current[CONF_FORECAST_HOURS])
+        )
         errors: dict[str, str] = {}
         if user_input is not None:
             report = await inspect_weather_entity(
@@ -297,9 +287,6 @@ class ClothingAdvisorOptionsFlow(config_entries.OptionsFlow):
             if not report.usable:
                 errors["base"] = "incompatible_weather_entity"
             else:
-                user_input[CONF_FORECAST_HOURS] = int(
-                    user_input[CONF_FORECAST_HOURS]
-                )
                 self._data.update(user_input)
                 if user_input[CONF_PROFILE] == PROFILE_CUSTOM:
                     return await self.async_step_custom()

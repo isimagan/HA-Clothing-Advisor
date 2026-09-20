@@ -9,6 +9,7 @@ CONF_SWEATER_THRESHOLD = "sweater_threshold"
 CONF_LIGHT_JACKET_THRESHOLD = "light_jacket_threshold"
 CONF_HEAVY_JACKET_THRESHOLD = "heavy_jacket_threshold"
 CONF_FORECAST_HOURS = "forecast_hours"
+FORECAST_HOUR_OPTIONS = (2, 4, 6, 8, 12, 16, 24)
 
 PROFILE_COLD = "cold"
 PROFILE_CUSTOM = "custom"

@@ -53,6 +53,15 @@ card.hass = {
         forecast_type: "hourly",
         highest_precipitation_probability: 10,
         max_wind_speed: 3,
+        clothing_advisor_id: "entry-1",
+      },
+    },
+    "select.clothing_advisor_look_ahead": {
+      entity_id: "select.clothing_advisor_look_ahead",
+      state: "4",
+      attributes: {
+        clothing_advisor_id: "entry-1",
+        options: ["2", "4", "6", "8", "12", "16", "24"],
       },
     },
   },
@@ -72,6 +81,38 @@ if (!card.shadowRoot.innerHTML.includes("T-skjorte og tynn jakke")) {
 if (context.window.customCards.length !== 1) {
   throw new Error("Card picker registration failed");
 }
+
+const detailListeners = new Map();
+let serviceCall;
+card.shadowRoot.querySelector = (selector) => ({
+  addEventListener: (type, handler) =>
+    detailListeners.set(`${selector}:${type}`, handler),
+});
+card._detailsOpen = true;
+card.hass = {
+  ...card._hass,
+  callService: (domain, service, data) => {
+    serviceCall = { domain, service, data };
+    return Promise.resolve();
+  },
+};
+if (!card.shadowRoot.innerHTML.includes("Se fremover") ||
+    !card.shadowRoot.innerHTML.includes('<option value="24">24 timer</option>')) {
+  throw new Error("Look-ahead selector did not render in the detail view");
+}
+detailListeners.get(".horizon-select:change")({
+  currentTarget: {
+    disabled: false,
+    dataset: { entityId: "select.clothing_advisor_look_ahead" },
+    value: "12",
+  },
+});
+if (serviceCall?.domain !== "select" ||
+    serviceCall?.service !== "select_option" ||
+    serviceCall?.data.option !== "12") {
+  throw new Error("Look-ahead selector did not call the select entity");
+}
+card._detailsOpen = false;
 
 const vestState = {
   ...card._hass.states["sensor.clothing_recommendation"],

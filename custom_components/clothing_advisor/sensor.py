@@ -73,6 +73,8 @@ class ClothingRecommendationSensor(
         """Return details for dashboards and automations."""
         attributes = asdict(self.coordinator.data)
         attributes.pop("state")
+        assert self.coordinator.config_entry is not None
+        attributes["clothing_advisor_id"] = self.coordinator.config_entry.entry_id
         attributes["reason"] = localized_reason(
             self.coordinator.data, self._translations
         )

@@ -18,8 +18,8 @@ The setup wizard guides you through three steps:
 1. Select a `weather.*` entity.
 2. Review a compatibility report for temperature, forecast, apparent
    temperature, wind, precipitation, gusts, and UV data.
-3. Choose a temperature profile and forecast period. Selecting **Custom** opens
-   a separate page where each clothing threshold can be adjusted.
+3. Choose a temperature profile. Selecting **Custom** opens a separate page
+   where each clothing threshold can be adjusted.
 
 The selected entity must provide a current temperature and at least one
 supported forecast type. Hourly forecasts give the best results; twice-daily
@@ -40,6 +40,11 @@ recommendation, feels-like temperature, clothing layers, and forecast range.
 Select **See why** to open a mobile-friendly detail view with the explanation
 and weather factors used by the recommendation. The card follows the active
 Home Assistant theme and supports English and Norwegian.
+
+The integration creates a **Look ahead / Se fremover** select entity with 2,
+4, 6, 8, 12, 16, and 24-hour choices. It defaults to 4 hours and can be changed
+for the day at any time. The same selector is available directly in the card's
+**See why** detail view, and changing it immediately recalculates the advice.
 
 ## Recommendation sensor
 
@@ -93,13 +98,14 @@ The default settings are:
 | Sweater threshold | 12 °C |
 | Light jacket threshold | 15 °C |
 | Thick jacket threshold | 6 °C |
-| Forecast period | 4 hours |
+| Look-ahead period | 4 hours |
 
 The **I get cold easily** profile shifts clothing thresholds 2 °C warmer. The
 **I get warm easily** profile shifts them 2 °C cooler. **Custom** uses the exact
 thresholds entered on the following page. All settings, including the weather
 entity, can be changed later from the integration's **Configure** dialog without
-removing and re-adding it.
+removing and re-adding it. The look-ahead period is changed through its select
+entity or the card detail view rather than the configuration dialog.
 
 ## Manual installation
 

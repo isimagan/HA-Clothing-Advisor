@@ -12,6 +12,8 @@ const TEXT = {
     recommended: "Recommended",
     normalProfile: "Clothing layers",
     why: "Why this?",
+    lookAhead: "Look ahead",
+    hourOption: "{hours} hours",
     forecast: "Weather ahead",
     hours: "{hours} hours",
     lowest: "Lowest",
@@ -39,6 +41,8 @@ const TEXT = {
     recommended: "Anbefalt",
     normalProfile: "Kleslag",
     why: "Hvorfor dette?",
+    lookAhead: "Se fremover",
+    hourOption: "{hours} timer",
     forecast: "Været fremover",
     hours: "{hours} timer",
     lowest: "Laveste",
@@ -203,6 +207,17 @@ const STYLE = `
   .reason { margin-top: 12px; padding: 11px 12px; border-radius: 13px; background: var(--ca-soft); }
   .reason strong { display: block; margin-bottom: 4px; color: var(--ca-blue); font-size: 9px; text-transform: uppercase; letter-spacing: .06em; }
   .reason p { margin: 0; font-size: 11px; line-height: 1.5; }
+  .horizon-control {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    margin-top: 8px; padding: 9px 12px; border: 1px solid var(--ca-line);
+    border-radius: 13px; background: #fff; color: #17212b;
+  }
+  .horizon-control label { font-size: 11px; font-weight: 700; }
+  .horizon-select {
+    min-width: 96px; padding: 6px 28px 6px 9px; border: 1px solid rgba(23, 33, 43, .16);
+    border-radius: 9px; background: #fff; color: #17212b; font: inherit; font-size: 11px;
+  }
+  .horizon-select:disabled { opacity: .6; }
   details { border-top: 1px solid var(--ca-line); }
   summary { padding: 14px 20px; list-style: none; cursor: pointer; }
   summary::-webkit-details-marker { display: none; }
@@ -334,6 +349,31 @@ class ClothingAdvisorCard extends HTMLElement {
     return `<div class="garment"><span class="icon">${ICONS[icon]}</span><strong>${escapeHtml(name)}</strong></div>`;
   }
 
+  _horizonSelect(stateObj) {
+    const advisorId = stateObj.attributes.clothing_advisor_id;
+    if (!advisorId) return "";
+    const selectState = Object.values(this._hass.states).find(
+      (state) => state.entity_id.startsWith("select.") &&
+        state.attributes.clothing_advisor_id === advisorId,
+    );
+    if (!selectState) return "";
+
+    const text = this._text();
+    const options = selectState.attributes.options || [
+      "2", "4", "6", "8", "12", "16", "24",
+    ];
+    return `<div class="horizon-control">
+      <label for="clothing-advisor-horizon">${escapeHtml(text.lookAhead)}</label>
+      <select class="horizon-select" id="clothing-advisor-horizon" data-entity-id="${escapeHtml(selectState.entity_id)}">
+        ${options.map((option) => {
+          const selected = String(option) === selectState.state ? " selected" : "";
+          const label = this._format(text.hourOption, { hours: option });
+          return `<option value="${escapeHtml(option)}"${selected}>${escapeHtml(label)}</option>`;
+        }).join("")}
+      </select>
+    </div>`;
+  }
+
   _detail(stateObj, values) {
     const text = this._text();
     const hours = stateObj.attributes.forecast_hours ?? 4;
@@ -364,6 +404,7 @@ class ClothingAdvisorCard extends HTMLElement {
             ${this._layer(stateObj.attributes.outerwear === "vest" ? "vest" : "jacket", values.outerwear, text.outerwear)}
           </div>
           <div class="reason"><strong>${escapeHtml(text.why)}</strong><p>${escapeHtml(values.reason)}</p></div>
+          ${this._horizonSelect(stateObj)}
         </section>
         <details>
           <summary class="forecast-summary">
@@ -398,6 +439,21 @@ class ClothingAdvisorCard extends HTMLElement {
   }
 
   _wireDetailEvents() {
+    this.shadowRoot.querySelector(".horizon-select")?.addEventListener(
+      "change",
+      async (event) => {
+        const select = event.currentTarget;
+        select.disabled = true;
+        try {
+          await this._hass.callService("select", "select_option", {
+            entity_id: select.dataset.entityId,
+            option: select.value,
+          });
+        } finally {
+          select.disabled = false;
+        }
+      },
+    );
     this.shadowRoot.querySelector(".close")?.addEventListener("click", () => {
       this._detailsOpen = false;
       this._render();
