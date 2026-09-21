@@ -9,6 +9,7 @@ from typing import Any
 from .const import (
     CONF_FORECAST_HOURS,
     CONF_HEAVY_JACKET_THRESHOLD,
+    CONF_JACKET_THRESHOLD,
     CONF_LIGHT_JACKET_THRESHOLD,
     CONF_PROFILE,
     CONF_SHORTS_THRESHOLD,
@@ -27,9 +28,9 @@ OUTERWEAR = (
     "no_jacket",
     "vest",
     "light_jacket",
-    "thick_jacket",
+    "jacket",
+    "winter_jacket",
     "rain_jacket",
-    "thick_waterproof_jacket",
 )
 RECOMMENDATION_STATES = tuple(
     "_".join(part for part in (bottom, BASE_LAYER, mid_layer, outerwear) if part)
@@ -63,6 +64,7 @@ class ClothingRecommendation:
     mid_layer: str | None
     top: str
     outerwear: str
+    umbrella: bool
     rain: bool
     reason: str
     current_temperature: float
@@ -108,6 +110,7 @@ def build_recommendation(
     light_jacket_threshold = (
         float(settings[CONF_LIGHT_JACKET_THRESHOLD]) + adjustment
     )
+    jacket_threshold = float(settings[CONF_JACKET_THRESHOLD]) + adjustment
     heavy_jacket_threshold = (
         float(settings[CONF_HEAVY_JACKET_THRESHOLD]) + adjustment
     )
@@ -119,7 +122,9 @@ def build_recommendation(
     top = "t_shirt_sweater" if mid_layer else base_layer
 
     if low < heavy_jacket_threshold:
-        outerwear = "thick_jacket"
+        outerwear = "winter_jacket"
+    elif low < jacket_threshold:
+        outerwear = "jacket"
     elif low < light_jacket_threshold:
         outerwear = "light_jacket"
     else:
@@ -160,7 +165,8 @@ def build_recommendation(
         or precipitation > 0.5
         or bool(conditions & RAINY_CONDITIONS)
     )
-    if rain and outerwear in {"no_jacket", "light_jacket"}:
+    umbrella = rain
+    if rain and outerwear in {"light_jacket", "jacket"}:
         outerwear = "rain_jacket"
     elif not rain and mid_layer == "sweater" and outerwear == "light_jacket" and (
         max_wind is None or max_wind <= 8
@@ -190,6 +196,7 @@ def build_recommendation(
         mid_layer=mid_layer,
         top=top,
         outerwear=outerwear,
+        umbrella=umbrella,
         rain=rain,
         reason=reason,
         current_temperature=weather.temperature,
@@ -238,6 +245,8 @@ def _warmer_outerwear(current: str) -> str:
     """Move outerwear one warmth level up."""
     return {
         "no_jacket": "light_jacket",
-        "light_jacket": "thick_jacket",
-        "rain_jacket": "thick_waterproof_jacket",
+        "vest": "jacket",
+        "light_jacket": "jacket",
+        "jacket": "winter_jacket",
+        "rain_jacket": "winter_jacket",
     }.get(current, current)

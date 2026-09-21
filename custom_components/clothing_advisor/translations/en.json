@@ -33,19 +33,21 @@
           "shorts_threshold": "Shorts threshold",
           "sweater_threshold": "Sweater threshold",
           "light_jacket_threshold": "Light jacket threshold",
-          "heavy_jacket_threshold": "Thick jacket threshold"
+          "jacket_threshold": "Jacket threshold",
+          "heavy_jacket_threshold": "Winter jacket threshold"
         },
         "data_description": {
           "shorts_threshold": "Shorts are normally recommended at or above this temperature.",
           "sweater_threshold": "A sweater mid-layer is normally recommended at or below this temperature.",
           "light_jacket_threshold": "A light jacket is normally recommended below this temperature.",
-          "heavy_jacket_threshold": "A thick jacket is normally recommended below this temperature."
+          "jacket_threshold": "A jacket is normally recommended below this temperature.",
+          "heavy_jacket_threshold": "A winter jacket is normally recommended below this temperature."
         }
       }
     },
     "error": {
       "incompatible_weather_entity": "This entity must provide a temperature and a supported forecast.",
-      "invalid_threshold_order": "Thresholds must increase in this order: thick jacket, sweater, light jacket, shorts."
+      "invalid_threshold_order": "Thresholds must increase in this order: winter jacket, jacket, sweater, light jacket, shorts."
     },
     "abort": {
       "already_configured": "This weather entity is already configured."
@@ -68,19 +70,21 @@
           "shorts_threshold": "Shorts threshold",
           "sweater_threshold": "Sweater threshold",
           "light_jacket_threshold": "Light jacket threshold",
-          "heavy_jacket_threshold": "Thick jacket threshold"
+          "jacket_threshold": "Jacket threshold",
+          "heavy_jacket_threshold": "Winter jacket threshold"
         },
         "data_description": {
           "shorts_threshold": "Shorts are normally recommended at or above this temperature.",
           "sweater_threshold": "A sweater mid-layer is normally recommended at or below this temperature.",
           "light_jacket_threshold": "A light jacket is normally recommended below this temperature.",
-          "heavy_jacket_threshold": "A thick jacket is normally recommended below this temperature."
+          "jacket_threshold": "A jacket is normally recommended below this temperature.",
+          "heavy_jacket_threshold": "A winter jacket is normally recommended below this temperature."
         }
       }
     },
     "error": {
       "incompatible_weather_entity": "This entity must provide a temperature and a supported forecast.",
-      "invalid_threshold_order": "Thresholds must increase in this order: thick jacket, sweater, light jacket, shorts."
+      "invalid_threshold_order": "Thresholds must increase in this order: winter jacket, jacket, sweater, light jacket, shorts."
     }
   },
   "entity": {
@@ -90,26 +94,26 @@
         "state": {
           "shorts_t_shirt_no_jacket": "Shorts · T-shirt · No jacket",
           "shorts_t_shirt_light_jacket": "Shorts · T-shirt · Light jacket",
-          "shorts_t_shirt_thick_jacket": "Shorts · T-shirt · Thick jacket",
+          "shorts_t_shirt_jacket": "Shorts · T-shirt · Jacket",
           "shorts_t_shirt_rain_jacket": "Shorts · T-shirt · Rain jacket",
-          "shorts_t_shirt_thick_waterproof_jacket": "Shorts · T-shirt · Thick waterproof jacket",
+          "shorts_t_shirt_winter_jacket": "Shorts · T-shirt · Winter jacket",
           "shorts_t_shirt_sweater_no_jacket": "Shorts · T-shirt · Sweater · No jacket",
           "shorts_t_shirt_sweater_vest": "Shorts · T-shirt · Sweater · Vest",
           "shorts_t_shirt_sweater_light_jacket": "Shorts · T-shirt · Sweater · Light jacket",
-          "shorts_t_shirt_sweater_thick_jacket": "Shorts · T-shirt · Sweater · Thick jacket",
+          "shorts_t_shirt_sweater_jacket": "Shorts · T-shirt · Sweater · Jacket",
           "shorts_t_shirt_sweater_rain_jacket": "Shorts · T-shirt · Sweater · Rain jacket",
-          "shorts_t_shirt_sweater_thick_waterproof_jacket": "Shorts · T-shirt · Sweater · Thick waterproof jacket",
+          "shorts_t_shirt_sweater_winter_jacket": "Shorts · T-shirt · Sweater · Winter jacket",
           "trousers_t_shirt_no_jacket": "Trousers · T-shirt · No jacket",
           "trousers_t_shirt_light_jacket": "Trousers · T-shirt · Light jacket",
-          "trousers_t_shirt_thick_jacket": "Trousers · T-shirt · Thick jacket",
+          "trousers_t_shirt_jacket": "Trousers · T-shirt · Jacket",
           "trousers_t_shirt_rain_jacket": "Trousers · T-shirt · Rain jacket",
-          "trousers_t_shirt_thick_waterproof_jacket": "Trousers · T-shirt · Thick waterproof jacket",
+          "trousers_t_shirt_winter_jacket": "Trousers · T-shirt · Winter jacket",
           "trousers_t_shirt_sweater_no_jacket": "Trousers · T-shirt · Sweater · No jacket",
           "trousers_t_shirt_sweater_vest": "Trousers · T-shirt · Sweater · Vest",
           "trousers_t_shirt_sweater_light_jacket": "Trousers · T-shirt · Sweater · Light jacket",
-          "trousers_t_shirt_sweater_thick_jacket": "Trousers · T-shirt · Sweater · Thick jacket",
+          "trousers_t_shirt_sweater_jacket": "Trousers · T-shirt · Sweater · Jacket",
           "trousers_t_shirt_sweater_rain_jacket": "Trousers · T-shirt · Sweater · Rain jacket",
-          "trousers_t_shirt_sweater_thick_waterproof_jacket": "Trousers · T-shirt · Sweater · Thick waterproof jacket"
+          "trousers_t_shirt_sweater_winter_jacket": "Trousers · T-shirt · Sweater · Winter jacket"
         },
         "state_attributes": {
           "bottom": {
@@ -132,10 +136,13 @@
               "no_jacket": "No jacket",
               "vest": "Vest",
               "light_jacket": "Light jacket",
-              "thick_jacket": "Thick jacket",
+              "jacket": "Jacket",
               "rain_jacket": "Rain jacket",
-              "thick_waterproof_jacket": "Thick waterproof jacket"
+              "winter_jacket": "Winter jacket"
             }
+          },
+          "umbrella": {
+            "state": {"true": "Yes", "false": "No"}
           },
           "forecast_type": {
             "state": {

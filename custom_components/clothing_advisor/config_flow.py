@@ -15,6 +15,7 @@ from .compatibility import CompatibilityReport, inspect_weather_entity
 from .const import (
     CONF_FORECAST_HOURS,
     CONF_HEAVY_JACKET_THRESHOLD,
+    CONF_JACKET_THRESHOLD,
     CONF_LIGHT_JACKET_THRESHOLD,
     CONF_PROFILE,
     CONF_SHORTS_THRESHOLD,
@@ -100,6 +101,12 @@ def _threshold_schema(values: dict[str, Any]) -> vol.Schema:
                 ),
             ): temperature_selector,
             vol.Required(
+                CONF_JACKET_THRESHOLD,
+                default=values.get(
+                    CONF_JACKET_THRESHOLD, DEFAULTS[CONF_JACKET_THRESHOLD]
+                ),
+            ): temperature_selector,
+            vol.Required(
                 CONF_HEAVY_JACKET_THRESHOLD,
                 default=values.get(
                     CONF_HEAVY_JACKET_THRESHOLD,
@@ -114,6 +121,7 @@ def _valid_thresholds(values: dict[str, Any]) -> bool:
     """Return whether thresholds move consistently from heavy to light clothing."""
     return (
         float(values[CONF_HEAVY_JACKET_THRESHOLD])
+        <= float(values[CONF_JACKET_THRESHOLD])
         <= float(values[CONF_SWEATER_THRESHOLD])
         <= float(values[CONF_LIGHT_JACKET_THRESHOLD])
         <= float(values[CONF_SHORTS_THRESHOLD])
@@ -332,6 +340,7 @@ def _default_thresholds() -> dict[str, Any]:
             CONF_SHORTS_THRESHOLD,
             CONF_SWEATER_THRESHOLD,
             CONF_LIGHT_JACKET_THRESHOLD,
+            CONF_JACKET_THRESHOLD,
             CONF_HEAVY_JACKET_THRESHOLD,
         )
     }

@@ -28,6 +28,10 @@ const TEXT = {
     bottom: "Bottom",
     top: "Top layers",
     outerwear: "Outerwear",
+    umbrella: "Umbrella",
+    accessory: "Accessory",
+    bring: "Bring",
+    notNeeded: "Not needed",
     noData: "Not available",
   },
   nb: {
@@ -57,6 +61,10 @@ const TEXT = {
     bottom: "Underlag",
     top: "Overdeler",
     outerwear: "Ytterlag",
+    umbrella: "Paraply",
+    accessory: "Tilbehør",
+    bring: "Ta med",
+    notNeeded: "Ikke nødvendig",
     noData: "Ikke tilgjengelig",
   },
 };
@@ -71,9 +79,9 @@ const VALUE_FALLBACKS = {
     no_jacket: "No jacket",
     vest: "Vest",
     light_jacket: "Light jacket",
-    thick_jacket: "Thick jacket",
+    jacket: "Jacket",
     rain_jacket: "Rain jacket",
-    thick_waterproof_jacket: "Thick waterproof jacket",
+    winter_jacket: "Winter jacket",
     hourly: "hourly",
     twice_daily: "twice-daily",
     daily: "daily",
@@ -87,9 +95,9 @@ const VALUE_FALLBACKS = {
     no_jacket: "Ingen jakke",
     vest: "Vest",
     light_jacket: "Tynn jakke",
-    thick_jacket: "Tykk jakke",
+    jacket: "Jakke",
     rain_jacket: "Regnjakke",
-    thick_waterproof_jacket: "Tykk vanntett jakke",
+    winter_jacket: "Vinterjakke",
     hourly: "timebasert",
     twice_daily: "halvdøgns",
     daily: "daglig",
@@ -101,6 +109,7 @@ const ICONS = {
   shirt: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 4-5 3 2 4 3-1v10h8V10l3 1 2-4-5-3c-.6 1.4-2 2-4 2S8.6 5.4 8 4Z"/></svg>`,
   jacket: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 4-4 2-2 8 3 1 1-4v9h10v-9l1 4 3-1-2-8-4-2c-.4 1.2-1.4 2-3 2s-2.6-.8-3-2Z"/><path d="M12 6v14M9.5 10 12 7.5l2.5 2.5M9 15h2M13 15h2"/></svg>`,
   vest: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 3-3 2-2 8 3 1 1-4v10h10V10l1 4 3-1-2-8-3-2-2 3h-4L8 3Z"/><path d="M12 6v14M8 3l4 7 4-7M9 15h2M13 15h2"/></svg>`,
+  umbrella: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 0 1 18 0H3Z"/><path d="M12 3v15a3 3 0 0 0 6 0"/><path d="M3 12c1.7-1.7 3.3-1.7 5 0 1.3-1.7 2.7-1.7 4 0 1.3-1.7 2.7-1.7 4 0 1.7-1.7 3.3-1.7 5 0"/></svg>`,
   trousers: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10l1 17h-5l-1-10-1 10H6L7 3Z"/><path d="M7 7h10M12 3v7"/></svg>`,
   clock: `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.2 2"/></svg>`,
   close: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>`,
@@ -204,6 +213,7 @@ const STYLE = `
   .layer strong { font-size: 12px; }
   .layer span { color: #65727e; font-size: 10px; }
   .recommended { color: #1e9b65 !important; font-size: 9px !important; font-weight: 700; }
+  .not-needed { color: #65727e !important; font-size: 9px !important; font-weight: 700; }
   .reason { margin-top: 12px; padding: 11px 12px; border-radius: 13px; background: var(--ca-soft); }
   .reason strong { display: block; margin-bottom: 4px; color: var(--ca-blue); font-size: 9px; text-transform: uppercase; letter-spacing: .06em; }
   .reason p { margin: 0; font-size: 11px; line-height: 1.5; }
@@ -325,9 +335,14 @@ class ClothingAdvisorCard extends HTMLElement {
   _headline(stateObj) {
     const top = this._attribute(stateObj, "top");
     const outerwear = this._attribute(stateObj, "outerwear");
-    return stateObj.attributes.outerwear === "no_jacket"
-      ? top
-      : `${top} ${this._text().and} ${this._lowerFirst(outerwear)}`;
+    const parts = [top];
+    if (stateObj.attributes.outerwear !== "no_jacket") {
+      parts.push(this._lowerFirst(outerwear));
+    }
+    if (stateObj.attributes.umbrella) {
+      parts.push(this._lowerFirst(this._text().umbrella));
+    }
+    return parts.join(` ${this._text().and} `);
   }
 
   _lowerFirst(value) {
@@ -336,12 +351,14 @@ class ClothingAdvisorCard extends HTMLElement {
     return value.charAt(0).toLocaleLowerCase(locale) + value.slice(1);
   }
 
-  _layer(icon, name, category) {
+  _layer(icon, name, category, status, recommended = true) {
     const text = this._text();
+    const statusText = status || text.recommended;
+    const statusClass = recommended ? "recommended" : "not-needed";
     return `<div class="layer">
       <div class="layer-icon">${ICONS[icon]}</div>
       <div><strong>${escapeHtml(name)}</strong><span>${escapeHtml(category)}</span></div>
-      <span class="recommended">${escapeHtml(text.recommended)}</span>
+      <span class="${statusClass}">${escapeHtml(statusText)}</span>
     </div>`;
   }
 
@@ -402,6 +419,7 @@ class ClothingAdvisorCard extends HTMLElement {
             ${this._layer("trousers", values.bottom, text.bottom)}
             ${this._layer("shirt", values.top, text.top)}
             ${this._layer(stateObj.attributes.outerwear === "vest" ? "vest" : "jacket", values.outerwear, text.outerwear)}
+            ${this._layer("umbrella", text.umbrella, text.accessory, values.umbrella ? text.bring : text.notNeeded, values.umbrella)}
           </div>
           <div class="reason"><strong>${escapeHtml(text.why)}</strong><p>${escapeHtml(values.reason)}</p></div>
           ${this._horizonSelect(stateObj)}
@@ -433,6 +451,7 @@ class ClothingAdvisorCard extends HTMLElement {
       temperature: this._number(stateObj.attributes.apparent_temperature),
       low: this._number(stateObj.attributes.lowest_apparent_temperature),
       high: this._number(stateObj.attributes.highest_apparent_temperature),
+      umbrella: Boolean(stateObj.attributes.umbrella),
     };
     values.range = `${values.low}°–${values.high}°`;
     return values;
@@ -489,7 +508,9 @@ class ClothingAdvisorCard extends HTMLElement {
         <div class="garments">
           ${this._garment("trousers", values.bottom)}
           ${this._garment("shirt", values.top)}
-          ${this._garment(stateObj.attributes.outerwear === "vest" ? "vest" : "jacket", values.outerwear)}
+          ${stateObj.attributes.outerwear === "no_jacket" && values.umbrella
+            ? this._garment("umbrella", text.umbrella)
+            : this._garment(stateObj.attributes.outerwear === "vest" ? "vest" : "jacket", values.outerwear)}
         </div>
         <div class="footer"><span class="range"><span class="icon">${ICONS.clock}</span>${escapeHtml(values.range)}</span><button class="more" type="button">${escapeHtml(text.seeWhy)}</button></div>
       </ha-card>

@@ -45,6 +45,7 @@ card.hass = {
         top: "t_shirt",
         base_layer: "t_shirt",
         outerwear: "light_jacket",
+        umbrella: false,
         reason: "Føles som 14 °C nå.",
         apparent_temperature: 14,
         lowest_apparent_temperature: 12,
@@ -141,6 +142,32 @@ if (!/\.garment \{[^}]*background: #fff; color: #17212b;/s.test(card.shadowRoot.
     !/\.layer \{[^}]*background: #fff; color: #17212b;/s.test(card.shadowRoot.innerHTML) ||
     !/\.metric \{[^}]*background: #fff; color: #17212b;/s.test(card.shadowRoot.innerHTML)) {
   throw new Error("White boxes need dark text in dark themes");
+}
+
+const umbrellaState = {
+  ...vestState,
+  state: "trousers_t_shirt_no_jacket",
+  attributes: {
+    ...vestState.attributes,
+    mid_layer: null,
+    top: "t_shirt",
+    outerwear: "no_jacket",
+    umbrella: true,
+  },
+};
+card.hass = {
+  ...card._hass,
+  states: { "sensor.clothing_recommendation": umbrellaState },
+  formatEntityAttributeValue: (_state, attribute) => ({
+    bottom: "Bukse",
+    top: "T-skjorte",
+    outerwear: "Ingen jakke",
+    forecast_type: "Hver time",
+  })[attribute],
+};
+if (!card.shadowRoot.innerHTML.includes("T-skjorte og paraply") ||
+    !card.shadowRoot.innerHTML.includes("Paraply")) {
+  throw new Error("Warm rain did not render an umbrella without a jacket");
 }
 
 console.log("Frontend card registration, localization, and detail view passed");

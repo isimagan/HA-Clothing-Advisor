@@ -61,7 +61,7 @@ Assistant translates them for display:
 
 - `bottom`, `base_layer`, `mid_layer`, and `outerwear`
 - `top`, retained as a combined compatibility value
-- `rain` and a human-readable `reason`
+- `umbrella`, `rain`, and a human-readable `reason`
 - current and apparent temperature
 - lowest and highest apparent temperature in the selected period
 - highest precipitation probability and maximum wind speed
@@ -78,9 +78,12 @@ from the integration's device page. Raw attributes are also available under
 
 The recommendation engine uses apparent temperature when available and falls
 back to regular temperature. A T-shirt is the base layer, while a sweater is an
-optional mid-layer. In dry, calm weather, a vest can replace a light jacket
-over the sweater; a vest is never recommended without a sweater or together
-with a jacket. Colder, windy, or rainy conditions keep the appropriate jacket.
+optional mid-layer. Outerwear is selected independently as no jacket, vest,
+light jacket, jacket, winter jacket, or rain jacket. In dry, calm weather, a
+vest can replace a light jacket over the sweater; a vest is never recommended
+without a sweater or together with a jacket. An umbrella is a separate yes/no
+recommendation. Warm rain can therefore result in a T-shirt and umbrella with
+no jacket, while cool rain replaces a light jacket or jacket with a rain jacket.
 The engine selects removable layers for temperature changes and then adjusts
 outerwear for wind and rain.
 
@@ -97,7 +100,8 @@ The default settings are:
 | Shorts threshold | 18 °C |
 | Sweater threshold | 12 °C |
 | Light jacket threshold | 15 °C |
-| Thick jacket threshold | 6 °C |
+| Jacket threshold | 10 °C |
+| Winter jacket threshold | 6 °C |
 | Look-ahead period | 4 hours |
 
 The **I get cold easily** profile shifts clothing thresholds 2 °C warmer. The

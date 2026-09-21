@@ -94,8 +94,8 @@ class RecommendationTests(unittest.TestCase):
         self.assertEqual(result.state, "shorts_t_shirt_light_jacket")
         self.assertIn("cooling", result.reason)
 
-    def test_rain_changes_outerwear(self) -> None:
-        """Likely rain promotes rainproof outerwear."""
+    def test_warm_rain_adds_umbrella_without_forcing_jacket(self) -> None:
+        """Warm rain keeps outerwear off and recommends an umbrella."""
         result = recommendation.build_recommendation(
             snapshot(
                 21,
@@ -110,8 +110,28 @@ class RecommendationTests(unittest.TestCase):
             DEFAULT_SETTINGS,
             NOW,
         )
-        self.assertEqual(result.outerwear, "rain_jacket")
+        self.assertEqual(result.outerwear, "no_jacket")
+        self.assertTrue(result.umbrella)
         self.assertTrue(result.rain)
+
+    def test_cool_rain_uses_rain_jacket_and_umbrella(self) -> None:
+        """Rainproof outerwear replaces a thermal jacket when it is cool."""
+        result = recommendation.build_recommendation(
+            snapshot(
+                9,
+                [
+                    {
+                        "datetime": "2026-09-13T10:00:00+00:00",
+                        "temperature": 9,
+                        "precipitation_probability": 70,
+                    }
+                ],
+            ),
+            DEFAULT_SETTINGS,
+            NOW,
+        )
+        self.assertEqual(result.outerwear, "rain_jacket")
+        self.assertTrue(result.umbrella)
 
     def test_sweater_is_an_optional_mid_layer(self) -> None:
         """A dry, calm day can use a vest over a sweater instead of a jacket."""
@@ -143,7 +163,7 @@ class RecommendationTests(unittest.TestCase):
         for condition, wind_speed, temperature, expected in (
             ("rainy", None, 12, "rain_jacket"),
             ("sunny", 9, 12, "light_jacket"),
-            ("sunny", None, 5, "thick_jacket"),
+            ("sunny", None, 5, "winter_jacket"),
         ):
             with self.subTest(
                 condition=condition,
@@ -183,6 +203,10 @@ class RecommendationTests(unittest.TestCase):
                     "state_attributes"
                 ]["outerwear"]["state"]
                 self.assertEqual(set(outerwear), set(recommendation.OUTERWEAR))
+                umbrella = translations["entity"]["sensor"]["recommendation"][
+                    "state_attributes"
+                ]["umbrella"]["state"]
+                self.assertEqual(set(umbrella), {"true", "false"})
 
     def test_jacket_does_not_require_sweater(self) -> None:
         """Mild weather can recommend a T-shirt and jacket without a sweater."""
@@ -198,6 +222,31 @@ class RecommendationTests(unittest.TestCase):
         )
         self.assertIsNone(result.mid_layer)
         self.assertEqual(result.state, "trousers_t_shirt_light_jacket")
+
+    def test_outerwear_temperature_bands(self) -> None:
+        """Each thermal outerwear tier has its own default temperature band."""
+        for temperature, expected in (
+            (16, "no_jacket"),
+            (14, "light_jacket"),
+            (9, "jacket"),
+            (5, "winter_jacket"),
+        ):
+            with self.subTest(temperature=temperature):
+                result = recommendation.build_recommendation(
+                    snapshot(
+                        temperature,
+                        [
+                            {
+                                "datetime": "2026-09-13T10:00:00+00:00",
+                                "temperature": temperature,
+                            }
+                        ],
+                    ),
+                    DEFAULT_SETTINGS,
+                    NOW,
+                )
+                self.assertEqual(result.outerwear, expected)
+                self.assertFalse(result.umbrella)
 
     def test_profiles_shift_thresholds(self) -> None:
         """Cold and warm profiles shift the shorts threshold by two degrees."""

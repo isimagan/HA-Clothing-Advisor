@@ -13,6 +13,7 @@ from homeassistant.helpers.typing import ConfigType
 
 from .const import (
     CONF_HEAVY_JACKET_THRESHOLD,
+    CONF_JACKET_THRESHOLD,
     CONF_LIGHT_JACKET_THRESHOLD,
     CONF_PROFILE,
     CONF_SHORTS_THRESHOLD,
@@ -28,7 +29,7 @@ from .coordinator import ClothingAdvisorCoordinator
 
 PLATFORMS = [Platform.SELECT, Platform.SENSOR]
 CARD_URL = "/clothing_advisor/clothing-advisor-card.js"
-CARD_VERSION = "0.9.0"
+CARD_VERSION = "0.10.0"
 CARD_PATH = Path(__file__).parent / "frontend" / "clothing-advisor-card.js"
 
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
@@ -59,6 +60,7 @@ async def async_migrate_entry(
         CONF_SHORTS_THRESHOLD,
         CONF_SWEATER_THRESHOLD,
         CONF_LIGHT_JACKET_THRESHOLD,
+        CONF_JACKET_THRESHOLD,
         CONF_HEAVY_JACKET_THRESHOLD,
     )
     if any(effective[key] != DEFAULTS[key] for key in threshold_keys):

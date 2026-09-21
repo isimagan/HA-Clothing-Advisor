@@ -33,19 +33,21 @@
           "shorts_threshold": "Shortsgrense",
           "sweater_threshold": "Gensergrense",
           "light_jacket_threshold": "Grense for tynn jakke",
-          "heavy_jacket_threshold": "Grense for tykk jakke"
+          "jacket_threshold": "Grense for jakke",
+          "heavy_jacket_threshold": "Grense for vinterjakke"
         },
         "data_description": {
           "shorts_threshold": "Ved denne temperaturen eller høyere anbefales normalt shorts.",
           "sweater_threshold": "Ved eller under denne temperaturen anbefales normalt genser som mellomlag.",
           "light_jacket_threshold": "Under denne temperaturen anbefales normalt tynn jakke.",
-          "heavy_jacket_threshold": "Under denne temperaturen anbefales normalt tykk jakke."
+          "jacket_threshold": "Under denne temperaturen anbefales normalt jakke.",
+          "heavy_jacket_threshold": "Under denne temperaturen anbefales normalt vinterjakke."
         }
       }
     },
     "error": {
       "incompatible_weather_entity": "Entiteten må levere temperatur og en støttet prognose.",
-      "invalid_threshold_order": "Grensene må stige i denne rekkefølgen: tykk jakke, genser, tynn jakke, shorts."
+      "invalid_threshold_order": "Grensene må stige i denne rekkefølgen: vinterjakke, jakke, genser, tynn jakke, shorts."
     },
     "abort": {
       "already_configured": "Denne vær-entiteten er allerede konfigurert."
@@ -68,19 +70,21 @@
           "shorts_threshold": "Shortsgrense",
           "sweater_threshold": "Gensergrense",
           "light_jacket_threshold": "Grense for tynn jakke",
-          "heavy_jacket_threshold": "Grense for tykk jakke"
+          "jacket_threshold": "Grense for jakke",
+          "heavy_jacket_threshold": "Grense for vinterjakke"
         },
         "data_description": {
           "shorts_threshold": "Ved denne temperaturen eller høyere anbefales normalt shorts.",
           "sweater_threshold": "Ved eller under denne temperaturen anbefales normalt genser som mellomlag.",
           "light_jacket_threshold": "Under denne temperaturen anbefales normalt tynn jakke.",
-          "heavy_jacket_threshold": "Under denne temperaturen anbefales normalt tykk jakke."
+          "jacket_threshold": "Under denne temperaturen anbefales normalt jakke.",
+          "heavy_jacket_threshold": "Under denne temperaturen anbefales normalt vinterjakke."
         }
       }
     },
     "error": {
       "incompatible_weather_entity": "Entiteten må levere temperatur og en støttet prognose.",
-      "invalid_threshold_order": "Grensene må stige i denne rekkefølgen: tykk jakke, genser, tynn jakke, shorts."
+      "invalid_threshold_order": "Grensene må stige i denne rekkefølgen: vinterjakke, jakke, genser, tynn jakke, shorts."
     }
   },
   "entity": {
@@ -90,26 +94,26 @@
         "state": {
           "shorts_t_shirt_no_jacket": "Shorts · T-skjorte · Ingen jakke",
           "shorts_t_shirt_light_jacket": "Shorts · T-skjorte · Tynn jakke",
-          "shorts_t_shirt_thick_jacket": "Shorts · T-skjorte · Tykk jakke",
+          "shorts_t_shirt_jacket": "Shorts · T-skjorte · Jakke",
           "shorts_t_shirt_rain_jacket": "Shorts · T-skjorte · Regnjakke",
-          "shorts_t_shirt_thick_waterproof_jacket": "Shorts · T-skjorte · Tykk vanntett jakke",
+          "shorts_t_shirt_winter_jacket": "Shorts · T-skjorte · Vinterjakke",
           "shorts_t_shirt_sweater_no_jacket": "Shorts · T-skjorte · Genser · Ingen jakke",
           "shorts_t_shirt_sweater_vest": "Shorts · T-skjorte · Genser · Vest",
           "shorts_t_shirt_sweater_light_jacket": "Shorts · T-skjorte · Genser · Tynn jakke",
-          "shorts_t_shirt_sweater_thick_jacket": "Shorts · T-skjorte · Genser · Tykk jakke",
+          "shorts_t_shirt_sweater_jacket": "Shorts · T-skjorte · Genser · Jakke",
           "shorts_t_shirt_sweater_rain_jacket": "Shorts · T-skjorte · Genser · Regnjakke",
-          "shorts_t_shirt_sweater_thick_waterproof_jacket": "Shorts · T-skjorte · Genser · Tykk vanntett jakke",
+          "shorts_t_shirt_sweater_winter_jacket": "Shorts · T-skjorte · Genser · Vinterjakke",
           "trousers_t_shirt_no_jacket": "Bukse · T-skjorte · Ingen jakke",
           "trousers_t_shirt_light_jacket": "Bukse · T-skjorte · Tynn jakke",
-          "trousers_t_shirt_thick_jacket": "Bukse · T-skjorte · Tykk jakke",
+          "trousers_t_shirt_jacket": "Bukse · T-skjorte · Jakke",
           "trousers_t_shirt_rain_jacket": "Bukse · T-skjorte · Regnjakke",
-          "trousers_t_shirt_thick_waterproof_jacket": "Bukse · T-skjorte · Tykk vanntett jakke",
+          "trousers_t_shirt_winter_jacket": "Bukse · T-skjorte · Vinterjakke",
           "trousers_t_shirt_sweater_no_jacket": "Bukse · T-skjorte · Genser · Ingen jakke",
           "trousers_t_shirt_sweater_vest": "Bukse · T-skjorte · Genser · Vest",
           "trousers_t_shirt_sweater_light_jacket": "Bukse · T-skjorte · Genser · Tynn jakke",
-          "trousers_t_shirt_sweater_thick_jacket": "Bukse · T-skjorte · Genser · Tykk jakke",
+          "trousers_t_shirt_sweater_jacket": "Bukse · T-skjorte · Genser · Jakke",
           "trousers_t_shirt_sweater_rain_jacket": "Bukse · T-skjorte · Genser · Regnjakke",
-          "trousers_t_shirt_sweater_thick_waterproof_jacket": "Bukse · T-skjorte · Genser · Tykk vanntett jakke"
+          "trousers_t_shirt_sweater_winter_jacket": "Bukse · T-skjorte · Genser · Vinterjakke"
         },
         "state_attributes": {
           "bottom": {
@@ -132,10 +136,13 @@
               "no_jacket": "Ingen jakke",
               "vest": "Vest",
               "light_jacket": "Tynn jakke",
-              "thick_jacket": "Tykk jakke",
+              "jacket": "Jakke",
               "rain_jacket": "Regnjakke",
-              "thick_waterproof_jacket": "Tykk vanntett jakke"
+              "winter_jacket": "Vinterjakke"
             }
+          },
+          "umbrella": {
+            "state": {"true": "Ja", "false": "Nei"}
           },
           "forecast_type": {
             "state": {
